@@ -1,0 +1,3 @@
+Wed Aug 23 23:09:27 2023
+WARNING: mju_openResource: unknown file './xml/hopper.xml'
+
