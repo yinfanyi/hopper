@@ -1,5 +1,6 @@
 {
     "javascript.validate.enable": false,
     "python.defaultInterpreterPath": "/home/yyfyyf/anaconda3/envs/test01/bin/python3",
-    "python.analysis.typeCheckingMode": "off"
+    "python.analysis.typeCheckingMode": "off",
+    "files.autoSave": "onFocusChange"
 }
