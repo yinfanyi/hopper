@@ -114,6 +114,8 @@ class Linkage:
         return target_angles
     
     def set_angles(self, angles):
+        """设置当前所有关节角的大小，单位：弧度制
+        """
         self.angles = angles
 
     def check_valid(self):
@@ -125,5 +127,6 @@ if __name__ == '__main__':
     lengths = [1.0, 1.0, 1., 1.0]
     driving_link_index = [0,3]
     linkage = Linkage(lengths, driving_link_index)
-    print(linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
+    linkage.set_angles(linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
                                      current_angle=[3.14/2, 0, 0, -math.pi]))
+    
