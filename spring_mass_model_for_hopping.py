@@ -4,6 +4,7 @@ from matplotlib.animation import FuncAnimation
 from scipy.optimize import fsolve
 # from sympy import symbols, Eq, solve, exp, I, re, im
 import math
+# import cmath
 from typing import Optional
 import time
 
@@ -15,6 +16,7 @@ import time
 # 5.任意机构的正逆运动学求解
 # 5.动力学仿真
 # 6.跳跃模拟
+
 
 
 class Spring:
@@ -32,14 +34,14 @@ class Spring:
 
 class Linkage:
     def __init__(self, lengths:list, driving_link_index:list, initional_angle:Optional[np.array]=None):
-        """只考虑串联，最后一个杆为地面杆
+        """只考虑串联的单回路连杆，可以设定任意连杆为主动件
         """
         self.lengths = lengths
         # self.connections = connections
         self.num_links = len(lengths)
         self.connections = [i for i in range(self.num_links)]
-        self.angles = np.zeros(self.num_links)
         self.initional_angle = initional_angle
+        self.angles = initional_angle
         self.driving_link_index = driving_link_index
         self.passive_link_index = [num for num in self.connections if num not in self.driving_link_index]
     
@@ -48,13 +50,13 @@ class Linkage:
         """
         points = np.zeros(self.num_links+1, dtype=complex)
         for i in range(1, self.num_links+1):
-            parent_link = self.connections[i-1]
-            points[i] = points[parent_link] + self.lengths[i-1] * np.exp(1j * np.sum(self.angles[:i]))
+            # parent_link = self.connections[i-1]
+            points[i] = points[i-1] + self.lengths[i-1] * np.exp(1j * self.angles[i-1])
         x = np.real(points)
         y = np.imag(points)
         return x, y
     
-    def inverse_kinematics(self, driving_target_angles:list, current_angle:Optional[list]=None):
+    def inverse_kinematics(self, driving_target_angles:list, current_angle:Optional[list]=None) -> Optional[list]:
         '''逆运动学：输入主动件的输入转角，得到所有构件的转角
         
             参数：
@@ -66,10 +68,10 @@ class Linkage:
             
             存在问题：
             1. 只能求串联机构
-            2. 没有错误判断 
         '''
-        if current_angle == None:
-            current_angle = self.initional_pose
+        if current_angle is None:
+            current_angle = self.initional_angle
+
         assert len(driving_target_angles)==len(self.driving_link_index), "主动件转动角度的个数必须与主动件个数相同"
         
         X0 = []
@@ -93,13 +95,8 @@ class Linkage:
                 + self.lengths[self.passive_link_index[1]] * math.sin(X[1])
             return [result_x, result_y]
         
-        start = time.time()
         # 使用数值解，求解和初始位姿接近的解，但求解结果没有保证
         results = fsolve(f, X0)
-        print('逆解结果为：', results)
-        end = time.time()
-        print('time',end - start)
-
         target_angles = [0] * self.num_links
         i = 0
         for index in self.driving_link_index:
@@ -113,20 +110,65 @@ class Linkage:
 
         return target_angles
     
-    def set_angles(self, angles):
+    def set_angles(self, angles:list)->bool:
         """设置当前所有关节角的大小，单位：弧度制
         """
+        assert len(angles) == self.num_links, "请输入连杆对应数目的关节角！"
+        
+        if self.check_valid(angles) == False:
+            print('目标位置不可达，无法设置该关节角')
+            return False
+        
         self.angles = angles
+        return True
 
-    def check_valid(self):
-        """检验当前关节角是否能实现，能实现返回0，不能实现返回1
+    def check_valid(self, angles:list):
+        """检验该关节角是否能实现，能实现返回0，不能实现返回1
         """
-        pass
-
+        result = 0j # 用复数求回路是否闭合，即向量相加等于零
+        i = 0
+        for angle in angles:
+            result += self.lengths[i] * np.exp(1j * angle)
+            i += 1
+        if abs(result) > 0.1:
+            return False
+        return True
+        
+class Animation:
+    def __init__(self, linkage: Linkage):
+        self.linkage = linkage
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlim(-5, 5)
+        self.ax.set_ylim(-5, 5)
+        self.ax.set_aspect('equal')
+        self.line, = self.ax.plot([], [], 'o-', lw=2)
+    
+    def update(self, frame):
+        theta = frame * 0.05
+        angles = self.linkage.inverse_kinematics(driving_target_angles=[theta, -math.pi], 
+                                                 current_angle=self.linkage.angles)
+        self.linkage.set_angles(angles)
+        x, y = self.linkage.forward_kinematics()
+        print(f'x:{x}\ny:{y}')
+        self.line.set_data(x, y)
+        return self.line,
+    
+    def animate(self):
+        ani = FuncAnimation(self.fig, self.update, frames=range(200), blit=True)
+        plt.show()
+        
 if __name__ == '__main__':
     lengths = [1.0, 1.0, 1., 1.0]
     driving_link_index = [0,3]
-    linkage = Linkage(lengths, driving_link_index)
-    linkage.set_angles(linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
-                                     current_angle=[3.14/2, 0, 0, -math.pi]))
+    initional_angle = [3.14/2, 0, -math.pi/2, -math.pi]
+    
+    linkage = Linkage(lengths, driving_link_index,initional_angle)
+    
+    animation = Animation(linkage)
+    animation.animate()
+    # angles = linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
+    #                                  current_angle=[3.14/2, 0, -math.pi/2, -math.pi])
+    # print(angles)
+    # print(linkage.set_angles(angles))
+    # pprint(linkage.forward_kinematics())
     
