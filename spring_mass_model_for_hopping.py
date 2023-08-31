@@ -9,8 +9,12 @@ from typing import Optional
 import time
 
 # 大目标：仿真任意跳跃机器人的跳跃情况
-# 1.实现串联连杆机构的正逆运动学求解
-# 2.实现串联连杆机构的运动动画
+# 1.实现串联连杆机构的正逆运动学求解 check
+
+# 2.实现串联连杆机构的运动动画 
+## 存在问题：遇到奇异点？
+## 定位到出问题的那点
+
 # 3.实现添加弹簧和能量计算
 # 4.弹簧动画
 # 5.任意机构的正逆运动学求解
@@ -56,12 +60,12 @@ class Linkage:
         y = np.imag(points)
         return x, y
     
-    def inverse_kinematics(self, driving_target_angles:list, current_angle:Optional[list]=None) -> Optional[list]:
+    def inverse_kinematics(self, driving_target_angles:list, current_angles:Optional[list]=None) -> Optional[list]:
         '''逆运动学：输入主动件的输入转角，得到所有构件的转角
         
             参数：
             driving_target_angles：主动件的转角，弧度制。
-            current_angle:当前所有关节的角度，弧度制。
+            current_angles:当前所有关节的角度，弧度制。
             
             输出：
             目标所有关节的角度，弧度制
@@ -69,14 +73,14 @@ class Linkage:
             存在问题：
             1. 只能求串联机构
         '''
-        if current_angle is None:
-            current_angle = self.initional_angle
+        if current_angles is None:
+            current_angles = self.initional_angle
 
         assert len(driving_target_angles)==len(self.driving_link_index), "主动件转动角度的个数必须与主动件个数相同"
         
         X0 = []
         for index in self.passive_link_index:
-            X0.append(current_angle[index])
+            X0.append(current_angles[index])
         
         def f(X=[0., 0.]):
             # 关节之间约束关系，分解成x和y方向，因此只有两个未知数
@@ -108,7 +112,17 @@ class Linkage:
             target_angles[index] = results[i]
             i += 1
 
-        return target_angles
+        target_angle_limited = []
+        for target_angle in target_angles:
+            # 将角度限制在-pi到pi范围内
+            while abs(target_angle) > math.pi:
+                if target_angle > 0:
+                    target_angle += -2 * math.pi
+                elif target_angle < 0:
+                    target_angle += 2 * math.pi
+            target_angle_limited.append(target_angle)
+                    
+        return target_angle_limited
     
     def set_angles(self, angles:list)->bool:
         """设置当前所有关节角的大小，单位：弧度制
@@ -138,18 +152,20 @@ class Animation:
     def __init__(self, linkage: Linkage):
         self.linkage = linkage
         self.fig, self.ax = plt.subplots()
-        self.ax.set_xlim(-5, 5)
-        self.ax.set_ylim(-5, 5)
+        self.ax.set_xlim(-4, 4)
+        self.ax.set_ylim(-4, 4)
         self.ax.set_aspect('equal')
         self.line, = self.ax.plot([], [], 'o-', lw=2)
     
     def update(self, frame):
         theta = frame * 0.05
-        angles = self.linkage.inverse_kinematics(driving_target_angles=[theta, -math.pi], 
-                                                 current_angle=self.linkage.angles)
-        self.linkage.set_angles(angles)
+        target_angles = self.linkage.inverse_kinematics(driving_target_angles=[theta, -math.pi], 
+                                                 current_angles=self.linkage.angles)
+        self.linkage.set_angles(target_angles)
         x, y = self.linkage.forward_kinematics()
         print(f'x:{x}\ny:{y}')
+        print(f'target_angles:\n{target_angles}')
+        print('----------------------------------------------')
         self.line.set_data(x, y)
         return self.line,
     
@@ -167,7 +183,7 @@ if __name__ == '__main__':
     animation = Animation(linkage)
     animation.animate()
     # angles = linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
-    #                                  current_angle=[3.14/2, 0, -math.pi/2, -math.pi])
+    #                                  current_angles=[3.14/2, 0, -math.pi/2, -math.pi])
     # print(angles)
     # print(linkage.set_angles(angles))
     # pprint(linkage.forward_kinematics())
