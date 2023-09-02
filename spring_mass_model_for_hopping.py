@@ -10,11 +10,7 @@ import time
 
 # 大目标：仿真任意跳跃机器人的跳跃情况
 
-# 1.实现串联连杆机构的正逆运动学求解 check
-
-# 2.实现串联连杆机构的运动动画 check
-## 存在问题：遇到奇异点？
-## 解决：忘加角度限制了
+# 如何让点既能在外面定义，也能在
 
 # 3.实现添加弹簧和能量计算
 ## 弹簧连接点问题：如果弹簧不是连在关节点上，如何定义
@@ -24,27 +20,68 @@ import time
 
 
 # 5.任意机构的正逆运动学求解
-# 5.动力学仿真
-# 6.跳跃模拟
+
+# 6.动力学仿真
+
+# 7.跳跃模拟
+
 
 class Point:
-    def __init__(self, name: str) -> None:
-        '''定义一个点类，让连杆构件的的两端和弹簧构件继承这些点，方便计算不同构件的连接
+    def __init__(self, name: str, position:np.ndarray) -> bool:
+        '''定义一个点类，让连杆构件的的两端和弹簧构件继承这些点，方便保持不同构件之间连接拓扑机构在机构运动后保持不变
+            参数：
+            name 名字，指定点的名字
+            pos 点在世界坐标的位置，类型：3*1 np.array矩阵
         '''
-        pass
+        self.name = name
+        if self.check_position_array_length(position):            
+            self.position = position
+        else:
+            print('点定义的世界坐标不合法')
+            return False
+
+    def check_position_array_length(self, position:np.ndarray) -> bool:
+        if position.shape != (3, 1):
+            return False
+        return True
+
+class Line:
+    def __init__(self, name: str, start_point: Point, 
+                 end_point: Point, fix_points: list[Point]) -> bool:
+        '''定义一个线类，用于模拟杆件，方便点类附着在上面
+            参数：
+            name 名字，指定点的名字
+        '''
+        self.name = name
+        self.update_points(start_point, end_point)
+        self.fix_points = fix_points
+    
+    def update_points(self, start_point: Point, end_point: Point):
+        self.start_point = start_point
+        self.end_point = end_point
+        self.current_length = np.linalg.norm(end_point.position - 
+                                     start_point.position)
+        
+
 
 class Spring:
     def __init__(self, mass: float, initial_length: float, 
-                 stiffness: float, connected_points: list, connected_pos: float) -> None:
+                 stiffness: float, start_point: Point, end_point: Point) -> None:
         self.mass = mass
         self.stiffness = stiffness
         self.initial_length = initial_length
-        self.connected_points = connected_points
+        self.update_points(start_point, end_point)
+        
+    def update_points(self, start_point: Point, end_point: Point):
+        self.start_point = start_point
+        self.end_point = end_point
+        self.current_length = np.linalg.norm(end_point.position - 
+                                     start_point.position)
 
-    
     @property
-    def energy(self, current_length: float):
-        return 0.5 * self.stiffness * abs(current_length - self.initial_length)**2
+    def energy(self):
+        # 需要显式更新弹簧的位置后再获取能量，否则只能获取前一个时刻的能量值
+        return 0.5 * self.stiffness * abs(self.current_length - self.initial_length)**2
     
     # 弹簧对连杆的影响：求解出连杆处于势能最小的位置 
     # 双稳态？
