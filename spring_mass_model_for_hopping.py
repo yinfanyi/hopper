@@ -21,17 +21,26 @@ import time
 ## 如果弹簧是和弹簧相连，怎么定义，三根弹簧并联？
 
 # 4.弹簧动画
+
+
 # 5.任意机构的正逆运动学求解
 # 5.动力学仿真
 # 6.跳跃模拟
 
-
+class Point:
+    def __init__(self, name: str) -> None:
+        '''定义一个点类，让连杆构件的的两端和弹簧构件继承这些点，方便计算不同构件的连接
+        '''
+        pass
 
 class Spring:
-    def __init__(self, mass: float, initial_length: float, stiffness: float) -> None:
+    def __init__(self, mass: float, initial_length: float, 
+                 stiffness: float, connected_points: list, connected_pos: float) -> None:
         self.mass = mass
         self.stiffness = stiffness
         self.initial_length = initial_length
+        self.connected_points = connected_points
+
     
     @property
     def energy(self, current_length: float):
@@ -186,6 +195,7 @@ if __name__ == '__main__':
     
     animation = Animation(linkage)
     animation.animate()
+    
     # angles = linkage.inverse_kinematics(driving_target_angles=[3.14/2, -math.pi], 
     #                                  current_angles=[3.14/2, 0, -math.pi/2, -math.pi])
     # print(angles)
