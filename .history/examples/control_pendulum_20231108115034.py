@@ -12,7 +12,7 @@ class ContolPendulum(MuJoCoBase):
 
     def reset(self):
         # Set initial angle of pendulum
-        self.data.qpos[0] = np.pi/2
+        self.data.qpos[0] = np.pi
 
         # Set camera configuration
         self.cam.azimuth = 90.0

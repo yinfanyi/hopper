@@ -140,7 +140,7 @@ class Biped(MuJoCoBase):
 
 
 def main():
-    xml_path = "../xml/biped.xml"
+    xml_path = "./xml/biped.xml"
     sim = Biped(xml_path)
     sim.reset()
     sim.simulate()

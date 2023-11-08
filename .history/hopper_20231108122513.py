@@ -14,10 +14,10 @@ from mujoco_base import MuJoCoBase
 # 2.建模完成运动链闭环结构；弹簧大小、位置、性能设置
 # 3.保存运动时传感器参数并绘图
 # 4.在窗口或代码中修改模型
+# 5.深度学习得出最佳的跳跃形状设计
 
 # 1、实时画图 结束时显示所有的信息
 # 2、代码内修改模型
-# 3、获取site s_left的位置信息
 
 # FSM_AIR1 = 0
 # FSM_STANCE1 = 1
@@ -212,7 +212,7 @@ def main():
     xml_path = "./xml/hopper1/scene.xml"
     sim = Hopper1(xml_path)
     sim.reset()
-    sim.simulate()
+    sim.initial_state()
 
 
 if __name__ == "__main__":

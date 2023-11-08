@@ -15,7 +15,7 @@
 
 	<worldbody>
 		<light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
-		<body name="hopper" pos="0 0 3.5">
+		<body name="hopper" pos="0 0 1.55">
 			<!-- 约束跳跃机器人只在x和z方向自由 -->
 			<!-- <freejoint/>  -->
 			<joint name="x" type="slide" pos="0 0 0" axis="1 0 0" />
@@ -42,7 +42,7 @@
 				</body>
 			</body>
 		</body>
-		<body name="foot" pos="0 0 2">
+		<body name="foot" pos="0 0 0.05">
 			<freejoint />
 			<geom type="box" size=".2 .2 .1" rgba=".9 .9 .0 1" mass="1" />
 		</body>
@@ -63,7 +63,7 @@
 	</equality>
 
 	<tendon>
-		<spatial range="1 2.5" limited="true" width=".02" rgba=".95 .3 .3 1" stiffness="5000"
+		<spatial range="1 2.5" limited="true" width=".02" rgba=".95 .3 .3 1" stiffness="30000"
 			damping="10">
 			<site site="s_left" />
 			<site site="s_right" />

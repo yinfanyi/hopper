@@ -75,7 +75,7 @@ class ContolPendulum(MuJoCoBase):
 
 
 def main():
-    xml_path = "../xml/pendulum.xml"
+    xml_path = "./xml/pendulum.xml"
     sim = ContolPendulum(xml_path)
     sim.reset()
     sim.simulate()

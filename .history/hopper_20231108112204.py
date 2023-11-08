@@ -14,10 +14,10 @@ from mujoco_base import MuJoCoBase
 # 2.建模完成运动链闭环结构；弹簧大小、位置、性能设置
 # 3.保存运动时传感器参数并绘图
 # 4.在窗口或代码中修改模型
+# 5.深度学习得出最佳的跳跃形状设计
 
 # 1、实时画图 结束时显示所有的信息
 # 2、代码内修改模型
-# 3、获取site s_left的位置信息
 
 # FSM_AIR1 = 0
 # FSM_STANCE1 = 1
@@ -184,11 +184,8 @@ class Hopper1(MuJoCoBase):
         glfw.terminate()
     
     def initial_state(self):
-        # self.model.body_pos[1,2] = 3.5
-        # self.cam.lookat[0] = self.data.qpos[0]
         mj.mj_step(self.model, self.data)
-        # 可以通过 self.model.body_pos 来改变物体的初始位置
-        print(f"body_pos\n{self.model.body_pos}")
+        self.cam.lookat[0] = self.data.qpos[0]
         while not glfw.window_should_close(self.window):
             viewport_width, viewport_height = glfw.get_framebuffer_size(
                 self.window)
@@ -212,7 +209,7 @@ def main():
     xml_path = "./xml/hopper1/scene.xml"
     sim = Hopper1(xml_path)
     sim.reset()
-    sim.simulate()
+    sim.initial_state()
 
 
 if __name__ == "__main__":
