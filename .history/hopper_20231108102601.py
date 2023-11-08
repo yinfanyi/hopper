@@ -46,13 +46,13 @@ class Hopper1(MuJoCoBase):
         # self.set_position_servo(0, 100)
 
         # vservo-hip
-        # self.set_velocity_servo(1, 10)
+        self.set_velocity_servo(1, 10)
 
         # pservo-knee
         # self.set_position_servo(2, 1000)
 
         # vservo-knee
-        # self.set_velocity_servo(3, 0)
+        self.set_velocity_servo(3, 0)
 
         mj.set_mjcb_control(self.controller)
 

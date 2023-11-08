@@ -43,16 +43,16 @@ class Hopper1(MuJoCoBase):
         self.step_no = 0
 
         # pservo-hip
-        # self.set_position_servo(0, 100)
+        self.set_position_servo(0, 100)
 
         # vservo-hip
-        # self.set_velocity_servo(1, 10)
+        self.set_velocity_servo(1, 10)
 
         # pservo-knee
-        # self.set_position_servo(2, 1000)
+        self.set_position_servo(2, 1000)
 
         # vservo-knee
-        # self.set_velocity_servo(3, 0)
+        self.set_velocity_servo(3, 0)
 
         mj.set_mjcb_control(self.controller)
 
@@ -72,39 +72,39 @@ class Hopper1(MuJoCoBase):
         mj.mj_energyVel(model, data)
         
         # Lands on the ground
-        # if self.fsm == FSM_AIR1 and z_foot < 0.05:
-        #     self.fsm = FSM_STANCE1
+        if self.fsm == FSM_AIR1 and z_foot < 0.05:
+            self.fsm = FSM_STANCE1
         
-        # # Moving upward
-        # if self.fsm == FSM_STANCE1 and vz_torso > 0.0:
-        #     self.fsm = FSM_STANCE2
+        # Moving upward
+        if self.fsm == FSM_STANCE1 and vz_torso > 0.0:
+            self.fsm = FSM_STANCE2
 
-        # # Take off
-        # if self.fsm == FSM_STANCE2 and z_foot > 0.05:
-        #     self.fsm = FSM_AIR2
+        # Take off
+        if self.fsm == FSM_STANCE2 and z_foot > 0.05:
+            self.fsm = FSM_AIR2
         
-        # # Moving downward
-        # if self.fsm == FSM_AIR2 and vz_torso < 0.0:
-        #     self.fsm = FSM_AIR1
-        #     self.step_no += 1
+        # Moving downward
+        if self.fsm == FSM_AIR2 and vz_torso < 0.0:
+            self.fsm = FSM_AIR1
+            self.step_no += 1
         
-        # if self.fsm == FSM_AIR1:
-        #     self.set_position_servo(2, 100)
-        #     self.set_velocity_servo(3, 10)
+        if self.fsm == FSM_AIR1:
+            self.set_position_servo(2, 100)
+            self.set_velocity_servo(3, 10)
 
-        # if self.fsm == FSM_STANCE1:
-        #     self.set_position_servo(2, 1000)
-        #     self.set_velocity_servo(3, 0)
+        if self.fsm == FSM_STANCE1:
+            self.set_position_servo(2, 1000)
+            self.set_velocity_servo(3, 0)
 
-        # if self.fsm == FSM_STANCE2:
-        #     self.set_position_servo(2, 1000)
-        #     self.set_velocity_servo(3, 0)
-        #     data.ctrl[0] = -0.2
+        if self.fsm == FSM_STANCE2:
+            self.set_position_servo(2, 1000)
+            self.set_velocity_servo(3, 0)
+            data.ctrl[0] = -0.2
 
-        # if self.fsm == FSM_AIR2:
-        #     self.set_position_servo(2, 100)
-        #     self.set_velocity_servo(3, 10)
-        #     data.ctrl[0] = 0.0
+        if self.fsm == FSM_AIR2:
+            self.set_position_servo(2, 100)
+            self.set_velocity_servo(3, 10)
+            data.ctrl[0] = 0.0
 
     def keyboard(self, window, key, scancode, act, mods):
             if act == glfw.PRESS and key == glfw.KEY_BACKSPACE:
@@ -160,13 +160,13 @@ class Hopper1(MuJoCoBase):
 
         glfw.terminate()
     
-    # def set_position_servo(self, actuator_no, kp):
-    #     self.model.actuator_gainprm[actuator_no, 0] = kp
-    #     self.model.actuator_biasprm[actuator_no, 1] = -kp
+    def set_position_servo(self, actuator_no, kp):
+        self.model.actuator_gainprm[actuator_no, 0] = kp
+        self.model.actuator_biasprm[actuator_no, 1] = -kp
     
-    # def set_velocity_servo(self, actuator_no, kv):
-    #     self.model.actuator_gainprm[actuator_no, 0] = kv
-    #     self.model.actuator_biasprm[actuator_no, 2] = -kv
+    def set_velocity_servo(self, actuator_no, kv):
+        self.model.actuator_gainprm[actuator_no, 0] = kv
+        self.model.actuator_biasprm[actuator_no, 2] = -kv
 
 def main():
     xml_path = "./xml/hopper1/scene.xml"
