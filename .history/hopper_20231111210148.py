@@ -19,21 +19,13 @@ from mujoco_base import MuJoCoBase
 # 6、连接多个弹簧的简便方法
 # 7、代码内修改模型的长度
 # 8、代码内制造张拉整体结构
-# 9、qpos和qvel对应的geom 通过名字获得 check
-# 10、弹簧能量获取
-# 11、按键记录model和data文件 check
-
+# 9、qpos和qvel对应的geom 通过名字获得
 
 
 # 创造实验环境：
 # 有限状态机
 # 接触到地面：压缩
 # 在空中：
-
-# 实验：弹簧阻尼damping过小导致振动如何避免 
-# 未触底已经达到最大变形量，使跳跃高度损失怎么办
-# 实验：起跳 
-
 
 # FSM_AIR1 = 0
 # FSM_STANCE1 = 1
@@ -44,7 +36,7 @@ times = []
 kinetic_energies = []
 potential_energies = []
 total_energies = []
-spring_lengths = []
+spring_length = []
 
 class Hopper1(MuJoCoBase):
     def __init__(self, xml_path):
@@ -60,6 +52,7 @@ class Hopper1(MuJoCoBase):
         self.cam.elevation = -11.588379
         self.cam.distance = 5.0
         self.cam.lookat = np.array([0.0, 0.0, 1.5])
+        self.data.qpos = [0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0]
         
         
         # self.model.opt.gravity = [0,0,-1]
@@ -87,13 +80,12 @@ class Hopper1(MuJoCoBase):
             mj.mj_forward(self.model, self.data)
         if act == glfw.PRESS and key == glfw.KEY_ESCAPE: 
             glfw.set_window_should_close(window, True)
-        if act == glfw.PRESS and key == glfw.KEY_S: 
-            model_text_dir = "./temp/model.txt"
-            data_text_dir = "./temp/data.txt"
-            mj.mj_printModel(self.model, model_text_dir)
-            mj.mj_printData(self.model, self.data, data_text_dir)
 
     def controller(self, model, data):
+        """
+        This function implements a controller that 
+        mimics the forces of a fixed joint before release
+        """
         # return
         # 之后不要直接读取位置，而是通过传感器读取位置，给传感器扰动，以符合现实传感器波动导致机器不稳的情况
         # z_foot = data.sensordata[0]
@@ -140,28 +132,20 @@ class Hopper1(MuJoCoBase):
         #     data.ctrl[0] = 0.0
     
     def plot_data(self, times:[]):
-        spring_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_TENDON, "tendon1")
-        spring_length = self.data.ten_length[spring_siteid]
-        
         times.append(self.data.time)
         kinetic_energies.append(self.data.energy[0])
         potential_energies.append(self.data.energy[1])
         total_energies.append(self.data.energy[0] + self.data.energy[1])
-        spring_lengths.append(spring_length)
+        spring_length.append(self.data.site_xpos[2,0])
         
         plt.figure(1)
         plt.clf()
         plt.plot(times, kinetic_energies, label='Kinetic Energy')
         plt.plot(times, potential_energies, label='Potential Energy')
         plt.plot(times, total_energies, label='Total Energy')
+        plt.plot(times, spring_length, label='spring_length')
         plt.xlabel('Time')
         plt.ylabel('Energy')
-        plt.legend()
-        plt.figure(2)
-        plt.clf()
-        plt.plot(times, spring_lengths, label='spring_length')
-        plt.xlabel('Time')
-        plt.ylabel('length')
         plt.legend()
         plt.draw()
         plt.pause(0.0001)
@@ -178,7 +162,7 @@ class Hopper1(MuJoCoBase):
                 # Step simulation environment
                 mj.mj_step(self.model, self.data)
             
-            # self.plot_data(times)
+            self.plot_data(times)
             
             # if (current_time - start_time) % 2 < 0.1: 
             #     print(f"data qpos{self.data.qpos}")
