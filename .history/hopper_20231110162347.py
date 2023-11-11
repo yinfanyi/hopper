@@ -15,11 +15,6 @@ from mujoco_base import MuJoCoBase
 # 2、代码内修改模型 check
 # 3、获取site s_left的位置信息 check
 # 4、显示世界坐标轴等各种信息 check
-# 5、键盘回调 escape退出 check
-# 6、连接多个弹簧的简便方法
-# 7、代码内修改模型的长度
-# 8、代码内制造张拉整体结构
-# 9、qpos和qvel对应的geom 通过名字获得
 
 
 # 创造实验环境：
@@ -42,7 +37,6 @@ class Hopper1(MuJoCoBase):
     def __init__(self, xml_path):
         super().__init__(xml_path)
         self.simend = 30.0
-        glfw.set_key_callback(self.window, self.keyboard)
         # self.fsm = None
         # self.step_no = 0
 
@@ -53,7 +47,6 @@ class Hopper1(MuJoCoBase):
         self.cam.distance = 5.0
         self.cam.lookat = np.array([0.0, 0.0, 1.5])
         self.data.qpos = [0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0]
-        
         
         # self.model.opt.gravity = [0,0,-1]
 
@@ -73,13 +66,6 @@ class Hopper1(MuJoCoBase):
         # self.set_velocity_servo(3, 0)
 
         mj.set_mjcb_control(self.controller)
-    
-    def keyboard(self, window, key, scancode, act, mods):
-        if act == glfw.PRESS and key == glfw.KEY_BACKSPACE:
-            mj.mj_resetData(self.model, self.data)
-            mj.mj_forward(self.model, self.data)
-        if act == glfw.PRESS and key == glfw.KEY_ESCAPE: 
-            glfw.set_window_should_close(window, True)
 
     def controller(self, model, data):
         """
@@ -130,26 +116,15 @@ class Hopper1(MuJoCoBase):
         #     self.set_position_servo(2, 100)
         #     self.set_velocity_servo(3, 10)
         #     data.ctrl[0] = 0.0
-    
-    def plot_data(self, times:[]):
-        times.append(self.data.time)
-        kinetic_energies.append(self.data.energy[0])
-        potential_energies.append(self.data.energy[1])
-        total_energies.append(self.data.energy[0] + self.data.energy[1])
-        spring_length.append(self.data.site_xpos[2,0]-self.data.site_xpos[1,0])
-        
-        plt.figure(1)
-        plt.clf()
-        plt.plot(times, kinetic_energies, label='Kinetic Energy')
-        plt.plot(times, potential_energies, label='Potential Energy')
-        plt.plot(times, total_energies, label='Total Energy')
-        plt.plot(times, spring_length, label='spring_length')
-        plt.xlabel('Time')
-        plt.ylabel('Energy')
-        plt.legend()
-        plt.draw()
-        plt.pause(0.0001)
-        
+
+    def keyboard(self, window, key, scancode, act, mods):
+            if act == glfw.PRESS and key == glfw.KEY_BACKSPACE:
+                mj.mj_resetData(self.model, self.data)
+                mj.mj_forward(self.model, self.data)
+            if act == glfw.PRESS and key == glfw.KEY_A:
+                # 在这里增加逻辑
+                # 改变模型、太
+                pass
 
     def simulate(self):
         start_time = time.time()
@@ -158,20 +133,28 @@ class Hopper1(MuJoCoBase):
             
             current_time = time.time()
             
-            while (self.data.time - simstart < 1.0/24.0):
+            while (self.data.time - simstart < 1.0/60.0):
                 # Step simulation environment
                 mj.mj_step(self.model, self.data)
-            
-            # self.plot_data(times)
-            
-            # if (current_time - start_time) % 2 < 0.1: 
-            #     print(f"data qpos{self.data.qpos}")
-            #     print(f"self.model.actuator_gainprm {self.model.actuator_gainprm}")
-            #     print(f"time{self.data.time},\n动能{self.data.energy[0]},势能{self.data.energy[1]}\n,总能量{self.data.energy[0]+self.data.energy[1]}")
-            #     print(f"传感器数据{self.data.sensordata}")
-            #     print(f"节点的位置{self.data.site_xpos}")
-            #     print(f"节点的位置1{self.data.site_xpos[1,0]}")
                 
+            times.append(self.data.time)
+            kinetic_energies.append(self.data.energy[0])
+            potential_energies.append(self.data.energy[1])
+            total_energies.append(self.data.energy[0] + self.data.energy[1])
+            spring_length.append(self.data.site_xpos[2,0]-self.data.site_xpos[1,0])
+            plt.figure(1)
+            plt.clf()
+            plt.plot(times, kinetic_energies, label='Kinetic Energy')
+            plt.plot(times, potential_energies, label='Potential Energy')
+            plt.plot(times, total_energies, label='Total Energy')
+            plt.plot(times, spring_length, label='spring_length')
+            plt.xlabel('Time')
+            plt.ylabel('Energy')
+            plt.legend()
+            # plt.show(block=False)
+            plt.draw()
+            plt.pause(0.0001)
+
             if self.data.time >= self.simend:
                 break
 
@@ -183,7 +166,10 @@ class Hopper1(MuJoCoBase):
             # Update scene and render
             self.cam.lookat[0] = self.data.qpos[0]
             
-            
+            # scene_option = mj.MjvOption()
+            # scene_option.flags[mj.mjtVisFlag.mjVIS_JOINT] = True
+            # scene_option.frame = mj.mjtFrame.mjFRAME_GEOM
+            # scene_option.flags[mj.mjtVisFlag.mjVIS_TRANSPARENT] = True
             
             mj.mjv_updateScene(self.model, self.data, self.opt, None, self.cam,
                                mj.mjtCatBit.mjCAT_ALL.value, self.scene)
@@ -195,7 +181,14 @@ class Hopper1(MuJoCoBase):
             # process pending GUI events, call GLFW callbacks
             glfw.poll_events()
             
-            
+            # print(f"cam lookat{self.cam.lookat}")
+            if (current_time - start_time) % 2 < 0.1: 
+                # print(f"data qpos{self.data.qpos}")
+                # print(f"self.model.actuator_gainprm {self.model.actuator_gainprm}")
+                print(f"time{self.data.time},\n动能{self.data.energy[0]},势能{self.data.energy[1]}\n,总能量{self.data.energy[0]+self.data.energy[1]}")
+                # print(f"传感器数据{self.data.sensordata}")
+                print(f"节点的位置{self.data.site_xpos}")
+                print(f"节点的位置1{self.data.site_xpos[1,0]}")
                 
         glfw.terminate()
     

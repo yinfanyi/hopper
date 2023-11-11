@@ -164,14 +164,24 @@ class Hopper1(MuJoCoBase):
             
             # self.plot_data(times)
             
-            # if (current_time - start_time) % 2 < 0.1: 
-            #     print(f"data qpos{self.data.qpos}")
-            #     print(f"self.model.actuator_gainprm {self.model.actuator_gainprm}")
-            #     print(f"time{self.data.time},\n动能{self.data.energy[0]},势能{self.data.energy[1]}\n,总能量{self.data.energy[0]+self.data.energy[1]}")
-            #     print(f"传感器数据{self.data.sensordata}")
-            #     print(f"节点的位置{self.data.site_xpos}")
-            #     print(f"节点的位置1{self.data.site_xpos[1,0]}")
+            if (current_time - start_time) % 2 < 0.1: 
+                # print(f"data qpos{self.data.qpos}")
+                # print(f"self.model.actuator_gainprm {self.model.actuator_gainprm}")
+                # print(f"time{self.data.time},\n动能{self.data.energy[0]},势能{self.data.energy[1]}\n,总能量{self.data.energy[0]+self.data.energy[1]}")
+                # print(f"传感器数据{self.data.sensordata}")
+                # print(f"节点的位置{self.data.site_xpos}")
+                # print(f"节点的位置1{self.data.site_xpos[1,0]}")
                 
+                jointid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_JOINT, "hip_left")
+                print('jointid', jointid)
+                if (jointid >= 0):
+                    qposadr = self.model.jnt_qposadr[jointid]
+                    qveladr = self.model.jnt_dofadr[jointid]
+                    print('qposadr',qposadr, self.data.qpos[qposadr])
+                    print('qveladr',qveladr, self.data.qvel[qveladr])
+                
+                
+
             if self.data.time >= self.simend:
                 break
 

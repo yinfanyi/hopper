@@ -197,7 +197,7 @@ class ManipulatorIK(MuJoCoBase):
 
 
 def main():
-    xml_path = "../xml/manipulator.xml"
+    xml_path = "./xml/manipulator.xml"
     sim = ManipulatorIK(xml_path)
     sim.reset()
     sim.simulate()
