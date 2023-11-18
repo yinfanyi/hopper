@@ -5,6 +5,7 @@ __pycache__/
 
 test1.ipynb
 test1.py
+temp/
 
 # C extensions
 *.so

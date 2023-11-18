@@ -1,6 +1,6 @@
 <mujoco>
-
-	<option timestep="0.001" integrator="RK4" gravity="0 0 -9.81">
+	<!-- 根据dsh提供的参数建模 -->
+	<option timestep="0.001" integrator="RK4" gravity="0 0 -10">
 		<flag sensornoise="enable" contact="enable" energy="enable" />
 	</option>
 
@@ -15,36 +15,52 @@
 
 	<worldbody>
 		<light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" />
-		<body name="hopper" pos="0 0 1.7">
+
+		<!-- <body name="measurment1" pos="-0.5 0 1">
+			<geom type="box" size=".05 .05 .05" rgba=".9 .9 .9 1" mass="2" />
+		</body>
+		
+		<body name="measurment2" pos="-0.5 0 2">
+			<geom type="box" size=".05 .05 .05" rgba=".9 .9 .9 1" mass="2" />
+		</body>
+		<body name="measurment3" pos="0 0 1">
+			<geom type="box" size=".05 .05 .05" rgba=".9 .9 .9 1" mass="2" />
+		</body>
+		<body name="measurment4" pos="0 0 2">
+			<geom type="box" size=".05 .05 .05" rgba=".9 .9 .9 1" mass="2" />
+		</body> -->
+
+		<body name="hopper" pos="0 0 2">
 			<!-- 约束跳跃机器人只在x和z方向自由 -->
 			<!-- <freejoint/>  -->
 			<joint name="x" type="slide" pos="0 0 0" axis="1 0 0" />
 			<joint name="z" type="slide" pos="0 0 0" axis="0 0 1" />
-
-			<geom type="box" size=".5 .2 .09" rgba=".9 .9 .9 1" mass="2" />
+			<geom type="box" size=".7 .2 .04" rgba=".9 .9 .9 1" mass="0.5" />
 			<site name="imu" size="0.01" pos="0 0 -0.09" />
-			<body name="thigh_left" pos="-0.5 0 -0.5" euler="0 45 0">
-				<joint name="hip_left" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-45 45" limited="true"/>
-				<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1"/>
-				<site name="s_left" pos="0 0 -0.5" />
-				<body name="leg_left" pos=".5 0 -0.5" euler="0 -90 0">
-					<joint name="knee_left" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-45 45" limited="true"/>
-					<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1"/>
+			<body name="thigh_left" pos="-0.6179 0 -0.1179" euler="0 45 0">
+				<joint name="hip_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 45" limited="true"/>
+				<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
+				<site name="s_left" pos="0 0 -0.1667" />
+				<body name="leg_left" pos="0.1667 0 -0.1179" euler="0 -90 0">
+					<joint name="knee_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 45" limited="true"/>
+					<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
 				</body>
 			</body>
-			<body name="thigh_right" pos="0.5 0 -0.5" euler="0 -45 0">
-				<joint name="hip_right" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-45 45" limited="true"/>
-				<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1"/>
-				<site name="s_right" pos="0 0 -0.5" />
-				<body name="leg_right" pos="-.5 0 -0.5" euler="0 90 0">
-					<joint name="knee_right" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-45 45" limited="true"/>
-					<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1"/>
+			<body name="thigh_right" pos="0.6179 0 -0.1179" euler="0 -45 0">
+				<joint name="hip_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 45" limited="true"/>
+				<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
+				<site name="s_right" pos="0 0 -0.1667" />
+				<body name="leg_right" pos="-0.1667 0 -0.1179" euler="0 90 0">
+					<joint name="knee_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 45" limited="true"/>
+					<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
 				</body>
 			</body>
 		</body>
-		<body name="foot" pos="0 0 0.101">
+		<body name="foot" pos="0 0 1.5286">
 			<freejoint />
-			<geom type="box" size=".2 .2 .1" rgba=".9 .9 .0 1" mass="2" />
+			<!-- <joint name="x1" type="slide" pos="0 0 0" axis="1 0 0" />
+			<joint name="z1" type="slide" pos="0 0 0" axis="0 0 1" /> -->
+			<geom type="box" size=".6 .2 .05" rgba=".9 .9 .0 1" mass="0.5" />
 			<site name="foot_ground" pos="0 0 -0.055" />
 		</body>
 	</worldbody>
@@ -59,13 +75,13 @@
 	</contact>
 
 	<equality>
-		<connect name="c1" body1="leg_left" body2="foot" anchor="0 0 -0.5" />
-		<connect name="c2" body1="leg_right" body2="foot" anchor="0 0 -0.5" />
+		<connect name="c1" body1="leg_left" body2="foot" anchor="0 0 -0.1667" />
+		<connect name="c2" body1="leg_right" body2="foot" anchor="0 0 -0.1667" />
 	</equality>
 
 	<tendon>
 		<spatial name='tendon1' range="0.1 10" limited="true" width=".02" rgba=".95 .3 .3 1"
-			stiffness="1500" damping="10" springlength="1 1.001">
+			stiffness="500" damping="0.01" springlength="0.25 0.251">
 			<site site="s_left" />
 			<site site="s_right" />
 		</spatial>
@@ -96,6 +112,6 @@
 
 	<keyframe>
 		<!-- 不设定时间默认每次都重新为0，所以只能用来做初始状态或者做动画，不能用于做仿真 -->
-		<key name="take_off" qpos="0 -1 0 0 0 0 0 0 0.101 1 0 0 0" />
+		<!-- <key name="take_off" qpos="0 -1 0 0 0 0 0 0 0.101 1 0 0 0" /> -->
 	</keyframe>
 </mujoco>
