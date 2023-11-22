@@ -9,7 +9,6 @@ from mujoco.glfw import glfw
 from numpy.linalg import inv
 from scipy.spatial.transform import Rotation as R
 
-
 from mujoco_base import MuJoCoBase
 
 # TODO:
@@ -189,18 +188,24 @@ class HopperData:
         filename = save_dir + "data_image_" + date_time + ".png"
         plt.savefig(filename)
 
+    def get_jump_height(self):
+        indices = [i for i, x in enumerate(self.time_datas) if abs(x - 1) < 0.1]
+        print(indices)
+        
+
 class Hopper1(MuJoCoBase):
     def __init__(self, xml_path):
         super().__init__(xml_path)
-        self.simend = 30.0  # 停止时间
+        self.simend = 5  # 停止时间
         self.Hz = 20
         self.is_plot_data = True
+        self.is_plot_data = False
         glfw.set_key_callback(self.window, self.keyboard)
         self.fsm = None
         # self.step_no = 0
         # 储存用于画图和分析的数据
         self.hopperdata = HopperData()
-        self.start_time = time.time()
+        
 
     def reset(self):
         # Set camera configuration
@@ -396,9 +401,22 @@ class Hopper1(MuJoCoBase):
 
 def main():
     xml_path = "./xml/hopper1/scene2.xml"
-    sim = Hopper1(xml_path)
-    sim.reset()
-    sim.simulate()
+    i = 0
+    tendon_stiffness_data = []
+    max_height_data = []
+    while True:
+        sim = Hopper1(xml_path)
+        sim.simend = 2
+        sim.reset()
+        sim.model.tendon_stiffness[0] = sim.model.tendon_stiffness[0] + 100
+        print(sim.model.tendon_stiffness)
+        tendon_stiffness_data.append(sim.model.tendon_stiffness[0])
+        sim.simulate()
+        i += 1
+        if (i>50):
+            break
+    print(tendon_stiffness_data)
+    print(max_height_data)
     
     # sim.initial_state()
 

@@ -1,12 +1,12 @@
 MuJoCo version 2.3.7
 model name     cassie scene
 
-nq                    13
-nv                    12
+nq                    18
+nv                    16
 nu                    4
 nbody                 7
 nbvh                  7
-njnt                  7
+njnt                  6
 ngeom                 7
 nsite                 4
 nlight                2
@@ -18,19 +18,19 @@ neq                   2
 ntendon               1
 nwrap                 2
 nsensor               5
-nnames                372
-nnames_map            96
-nM                    38
-nD                    64
-nB                    40
+nnames                369
+nnames_map            94
+nM                    72
+nD                    128
+nB                    64
 nemax                 6
 njmax                 -1
 nconmax               -1
 nstack                1835008
 nsensordata           11
-nbuffer               5007936
+nbuffer               5008184
 
-timestep              0.001   
+timestep              0.0001  
 apirate               1e+02   
 impratio              1       
 tolerance             1e-08   
@@ -57,15 +57,15 @@ o_solimp              0.9       0.95      0.001     0.5       2
 
 totalmass             3       
 
-meaninertia           0.57    
+meaninertia           0.7     
 meanmass              0.5     
 meansize              0.34    
 extent                1.1     
 center                0        0        0.55    
 
-qpos0                 0         0         0         0         0         0         0         0         1.5       1         0         0         0        
+qpos0                 0         0         2         1         0         0         0         0         0         0         0         0         0         1.5       1         0         0         0        
 
-qpos_spring           0         0         0         0         0         0         0         0         1.5       1         0         0         0        
+qpos_spring           0         0         2         1         0         0         0         0         0         0         0         0         0         1.5       1         0         0         0        
 
 
 BODY 0:
@@ -101,9 +101,9 @@ BODY 1:
   body_rootid           1 
   body_weldid           1 
   body_mocapid          -1 
-  body_jntnum           2 
+  body_jntnum           1 
   body_jntadr           0 
-  body_dofnum           2 
+  body_dofnum           6 
   body_dofadr           0 
   body_geomnum          1 
   body_geomadr          1 
@@ -116,7 +116,7 @@ BODY 1:
   body_mass             0.5      
   body_subtreemass      2.5      
   body_inertia          0.0069    0.082     0.088    
-  body_invweight0       0.52      0        
+  body_invweight0       0.89      7.7      
   body_gravcomp         0        
   body_plugin           -1 
   body_bvhadr           1 
@@ -129,9 +129,9 @@ BODY 2:
   body_weldid           2 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           2 
+  body_jntadr           1 
   body_dofnum           1 
-  body_dofadr           2 
+  body_dofadr           6 
   body_geomnum          1 
   body_geomadr          2 
   body_simple           0 
@@ -143,7 +143,7 @@ BODY 2:
   body_mass             0.5      
   body_subtreemass      1        
   body_inertia          0.0049    0.0049    0.00063  
-  body_invweight0       0.45      9.4      
+  body_invweight0       0.88      21       
   body_gravcomp         0        
   body_plugin           -1 
   body_bvhadr           2 
@@ -156,9 +156,9 @@ BODY 3:
   body_weldid           3 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           3 
+  body_jntadr           2 
   body_dofnum           1 
-  body_dofadr           3 
+  body_dofadr           7 
   body_geomnum          1 
   body_geomadr          3 
   body_simple           0 
@@ -170,7 +170,7 @@ BODY 3:
   body_mass             0.5      
   body_subtreemass      0.5      
   body_inertia          0.0049    0.0049    0.00063  
-  body_invweight0       0.97      23       
+  body_invweight0       1.4       30       
   body_gravcomp         0        
   body_plugin           -1 
   body_bvhadr           3 
@@ -183,9 +183,9 @@ BODY 4:
   body_weldid           4 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           4 
+  body_jntadr           3 
   body_dofnum           1 
-  body_dofadr           4 
+  body_dofadr           8 
   body_geomnum          1 
   body_geomadr          4 
   body_simple           0 
@@ -197,7 +197,7 @@ BODY 4:
   body_mass             0.5      
   body_subtreemass      1        
   body_inertia          0.0049    0.0049    0.00063  
-  body_invweight0       0.45      9.4      
+  body_invweight0       0.88      21       
   body_gravcomp         0        
   body_plugin           -1 
   body_bvhadr           4 
@@ -210,9 +210,9 @@ BODY 5:
   body_weldid           5 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           5 
+  body_jntadr           4 
   body_dofnum           1 
-  body_dofadr           5 
+  body_dofadr           9 
   body_geomnum          1 
   body_geomadr          5 
   body_simple           0 
@@ -224,7 +224,7 @@ BODY 5:
   body_mass             0.5      
   body_subtreemass      0.5      
   body_inertia          0.0049    0.0049    0.00063  
-  body_invweight0       0.97      23       
+  body_invweight0       1.4       30       
   body_gravcomp         0        
   body_plugin           -1 
   body_bvhadr           5 
@@ -237,9 +237,9 @@ BODY 6:
   body_weldid           6 
   body_mocapid          -1 
   body_jntnum           1 
-  body_jntadr           6 
+  body_jntadr           5 
   body_dofnum           6 
-  body_dofadr           6 
+  body_dofadr           10 
   body_geomnum          1 
   body_geomadr          6 
   body_simple           1 
@@ -259,28 +259,10 @@ BODY 6:
 
 
 JOINT 0:
-  name                  x
-  jnt_type              2 
+  name                  
+  jnt_type              0 
   jnt_qposadr           0 
   jnt_dofadr            0 
-  jnt_bodyid            1 
-  jnt_group             0 
-  jnt_limited           0 
-  jnt_actfrclimited     0 
-  jnt_solref            0.02      1        
-  jnt_solimp            0.9       0.95      0.001     0.5       2        
-  jnt_pos               0         0         0        
-  jnt_axis              1         0         0        
-  jnt_stiffness         0        
-  jnt_range             0         0        
-  jnt_actfrcrange       0         0        
-  jnt_margin            0        
-
-JOINT 1:
-  name                  z
-  jnt_type              2 
-  jnt_qposadr           1 
-  jnt_dofadr            1 
   jnt_bodyid            1 
   jnt_group             0 
   jnt_limited           0 
@@ -294,11 +276,11 @@ JOINT 1:
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 2:
+JOINT 1:
   name                  hip_left
   jnt_type              3 
-  jnt_qposadr           2 
-  jnt_dofadr            2 
+  jnt_qposadr           7 
+  jnt_dofadr            6 
   jnt_bodyid            2 
   jnt_group             0 
   jnt_limited           1 
@@ -308,33 +290,33 @@ JOINT 2:
   jnt_pos               0         0         0.17     
   jnt_axis              0        -1         0        
   jnt_stiffness         0        
-  jnt_range            -0.79      0.79     
+  jnt_range            -0.79      1.6      
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 3:
+JOINT 2:
   name                  knee_left
   jnt_type              3 
-  jnt_qposadr           3 
-  jnt_dofadr            3 
+  jnt_qposadr           8 
+  jnt_dofadr            7 
   jnt_bodyid            3 
   jnt_group             0 
-  jnt_limited           1 
+  jnt_limited           0 
   jnt_actfrclimited     0 
   jnt_solref            0.02      1        
   jnt_solimp            0.9       0.95      0.001     0.5       2        
   jnt_pos               0         0         0.17     
   jnt_axis              0        -1         0        
   jnt_stiffness         0        
-  jnt_range            -0.79      0.79     
+  jnt_range             0         0        
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 4:
+JOINT 3:
   name                  hip_right
   jnt_type              3 
-  jnt_qposadr           4 
-  jnt_dofadr            4 
+  jnt_qposadr           9 
+  jnt_dofadr            8 
   jnt_bodyid            4 
   jnt_group             0 
   jnt_limited           1 
@@ -344,33 +326,33 @@ JOINT 4:
   jnt_pos               0         0         0.17     
   jnt_axis              0        -1         0        
   jnt_stiffness         0        
-  jnt_range            -0.79      0.79     
+  jnt_range            -1.6       0.79     
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 5:
+JOINT 4:
   name                  knee_right
   jnt_type              3 
-  jnt_qposadr           5 
-  jnt_dofadr            5 
+  jnt_qposadr           10 
+  jnt_dofadr            9 
   jnt_bodyid            5 
   jnt_group             0 
-  jnt_limited           1 
+  jnt_limited           0 
   jnt_actfrclimited     0 
   jnt_solref            0.02      1        
   jnt_solimp            0.9       0.95      0.001     0.5       2        
   jnt_pos               0         0         0.17     
   jnt_axis              0        -1         0        
   jnt_stiffness         0        
-  jnt_range            -0.79      0.79     
+  jnt_range             0         0        
   jnt_actfrcrange       0         0        
   jnt_margin            0        
 
-JOINT 6:
+JOINT 5:
   name                  
   jnt_type              0 
-  jnt_qposadr           6 
-  jnt_dofadr            6 
+  jnt_qposadr           11 
+  jnt_dofadr            10 
   jnt_bodyid            6 
   jnt_group             0 
   jnt_limited           0 
@@ -396,12 +378,12 @@ DOF 0:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        0.79     
+  dof_invweight0        0.89     
   dof_M0                2.5      
 
 DOF 1:
   dof_bodyid            1 
-  dof_jntid             1 
+  dof_jntid             0 
   dof_parentid          0 
   dof_Madr              1 
   dof_simplenum         0 
@@ -410,12 +392,12 @@ DOF 1:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        0.79     
+  dof_invweight0        0.89     
   dof_M0                2.5      
 
 DOF 2:
-  dof_bodyid            2 
-  dof_jntid             2 
+  dof_bodyid            1 
+  dof_jntid             0 
   dof_parentid          1 
   dof_Madr              3 
   dof_simplenum         0 
@@ -424,12 +406,12 @@ DOF 2:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        28       
-  dof_M0                0.078    
+  dof_invweight0        0.89     
+  dof_M0                2.5      
 
 DOF 3:
-  dof_bodyid            3 
-  dof_jntid             3 
+  dof_bodyid            1 
+  dof_jntid             0 
   dof_parentid          2 
   dof_Madr              6 
   dof_simplenum         0 
@@ -438,13 +420,13 @@ DOF 3:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        97       
-  dof_M0                0.019    
+  dof_invweight0        7.7      
+  dof_M0                0.13     
 
 DOF 4:
-  dof_bodyid            4 
-  dof_jntid             4 
-  dof_parentid          1 
+  dof_bodyid            1 
+  dof_jntid             0 
+  dof_parentid          3 
   dof_Madr              10 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -452,28 +434,84 @@ DOF 4:
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        28       
-  dof_M0                0.078    
+  dof_invweight0        7.7      
+  dof_M0                0.94     
 
 DOF 5:
-  dof_bodyid            5 
-  dof_jntid             5 
+  dof_bodyid            1 
+  dof_jntid             0 
   dof_parentid          4 
-  dof_Madr              13 
+  dof_Madr              15 
   dof_simplenum         0 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
   dof_frictionloss      0        
   dof_armature          0        
   dof_damping           0        
-  dof_invweight0        97       
-  dof_M0                0.019    
+  dof_invweight0        7.7      
+  dof_M0                0.82     
 
 DOF 6:
+  dof_bodyid            2 
+  dof_jntid             1 
+  dof_parentid          5 
+  dof_Madr              21 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        64       
+  dof_M0                0.078    
+
+DOF 7:
+  dof_bodyid            3 
+  dof_jntid             2 
+  dof_parentid          6 
+  dof_Madr              28 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        1.3e+02  
+  dof_M0                0.019    
+
+DOF 8:
+  dof_bodyid            4 
+  dof_jntid             3 
+  dof_parentid          5 
+  dof_Madr              36 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        64       
+  dof_M0                0.078    
+
+DOF 9:
+  dof_bodyid            5 
+  dof_jntid             4 
+  dof_parentid          8 
+  dof_Madr              43 
+  dof_simplenum         0 
+  dof_solref            0.02      1        
+  dof_solimp            0.9       0.95      0.001     0.5       2        
+  dof_frictionloss      0        
+  dof_armature          0        
+  dof_damping           0        
+  dof_invweight0        1.3e+02  
+  dof_M0                0.019    
+
+DOF 10:
   dof_bodyid            6 
-  dof_jntid             6 
+  dof_jntid             5 
   dof_parentid          -1 
-  dof_Madr              17 
+  dof_Madr              51 
   dof_simplenum         6 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -483,11 +521,11 @@ DOF 6:
   dof_invweight0        2        
   dof_M0                0.5      
 
-DOF 7:
+DOF 11:
   dof_bodyid            6 
-  dof_jntid             6 
-  dof_parentid          6 
-  dof_Madr              18 
+  dof_jntid             5 
+  dof_parentid          10 
+  dof_Madr              52 
   dof_simplenum         5 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -497,11 +535,11 @@ DOF 7:
   dof_invweight0        2        
   dof_M0                0.5      
 
-DOF 8:
+DOF 12:
   dof_bodyid            6 
-  dof_jntid             6 
-  dof_parentid          7 
-  dof_Madr              20 
+  dof_jntid             5 
+  dof_parentid          11 
+  dof_Madr              54 
   dof_simplenum         4 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -511,11 +549,11 @@ DOF 8:
   dof_invweight0        2        
   dof_M0                0.5      
 
-DOF 9:
+DOF 13:
   dof_bodyid            6 
-  dof_jntid             6 
-  dof_parentid          8 
-  dof_Madr              23 
+  dof_jntid             5 
+  dof_parentid          12 
+  dof_Madr              57 
   dof_simplenum         3 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -525,11 +563,11 @@ DOF 9:
   dof_invweight0        58       
   dof_M0                0.0071   
 
-DOF 10:
+DOF 14:
   dof_bodyid            6 
-  dof_jntid             6 
-  dof_parentid          9 
-  dof_Madr              27 
+  dof_jntid             5 
+  dof_parentid          13 
+  dof_Madr              61 
   dof_simplenum         2 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -539,11 +577,11 @@ DOF 10:
   dof_invweight0        58       
   dof_M0                0.06     
 
-DOF 11:
+DOF 15:
   dof_bodyid            6 
-  dof_jntid             6 
-  dof_parentid          10 
-  dof_Madr              32 
+  dof_jntid             5 
+  dof_parentid          14 
+  dof_Madr              66 
   dof_simplenum         1 
   dof_solref            0.02      1        
   dof_solimp            0.9       0.95      0.001     0.5       2        
@@ -743,9 +781,9 @@ SITE 0:
   site_bodyid           1 
   site_matid            -1 
   site_group            0 
-  site_sameframe        0 
+  site_sameframe        1 
   site_size             0.01      0.005     0.005    
-  site_pos              0         0        -0.09     
+  site_pos              0         0         0        
   site_quat             1         0         0         0        
   site_rgba             0.5       0.5       0.5       1        
 
@@ -914,7 +952,7 @@ TENDON 0:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0.1       10       
   tendon_margin         0        
-  tendon_stiffness      5e+02    
+  tendon_stiffness      1e+03    
   tendon_damping        0.01     
   tendon_frictionloss   0        
   tendon_lengthspring   0.25      0.25     
@@ -933,7 +971,7 @@ ACTUATOR 0:
   actuator_dyntype      0 
   actuator_gaintype     0 
   actuator_biastype     1 
-  actuator_trnid        2  -1 
+  actuator_trnid        1  -1 
   actuator_actadr       -1 
   actuator_actnum       0 
   actuator_group        0 
@@ -941,14 +979,14 @@ ACTUATOR 0:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      3e+03     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0        -3e+03     0         0         0         0         0         0         0         0        
+  actuator_gainprm      10        0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0        -10        0         0         0         0         0         0         0         0        
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         42       
+  actuator_acc0         1e+02    
   actuator_length0      0        
   actuator_lengthrange  0         0        
   actuator_plugin       -1 
@@ -959,7 +997,7 @@ ACTUATOR 1:
   actuator_dyntype      0 
   actuator_gaintype     0 
   actuator_biastype     1 
-  actuator_trnid        2  -1 
+  actuator_trnid        1  -1 
   actuator_actadr       -1 
   actuator_actnum       0 
   actuator_group        0 
@@ -967,14 +1005,14 @@ ACTUATOR 1:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      1e+02     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0         0        -1e+02     0         0         0         0         0         0         0        
+  actuator_gainprm      10        0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0        -10        0         0         0         0         0         0         0        
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         42       
+  actuator_acc0         1e+02    
   actuator_length0      0        
   actuator_lengthrange  0         0        
   actuator_plugin       -1 
@@ -985,7 +1023,7 @@ ACTUATOR 2:
   actuator_dyntype      0 
   actuator_gaintype     0 
   actuator_biastype     1 
-  actuator_trnid        4  -1 
+  actuator_trnid        3  -1 
   actuator_actadr       -1 
   actuator_actnum       0 
   actuator_group        0 
@@ -993,14 +1031,14 @@ ACTUATOR 2:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      3e+03     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0        -3e+03     0         0         0         0         0         0         0         0        
+  actuator_gainprm      10        0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0        -10        0         0         0         0         0         0         0         0        
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         42       
+  actuator_acc0         1e+02    
   actuator_length0      0        
   actuator_lengthrange  0         0        
   actuator_plugin       -1 
@@ -1011,7 +1049,7 @@ ACTUATOR 3:
   actuator_dyntype      0 
   actuator_gaintype     0 
   actuator_biastype     1 
-  actuator_trnid        4  -1 
+  actuator_trnid        3  -1 
   actuator_actadr       -1 
   actuator_actnum       0 
   actuator_group        0 
@@ -1019,14 +1057,14 @@ ACTUATOR 3:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      1e+02     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0         0        -1e+02     0         0         0         0         0         0         0        
+  actuator_gainprm      10        0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0        -10        0         0         0         0         0         0         0        
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
   actuator_gear         1         0         0         0         0         0        
   actuator_cranklength  0        
-  actuator_acc0         42       
+  actuator_acc0         1e+02    
   actuator_length0      0        
   actuator_lengthrange  0         0        
   actuator_plugin       -1 
@@ -1038,7 +1076,7 @@ SENSOR 0:
   sensor_datatype       0 
   sensor_needstage      1 
   sensor_objtype        3 
-  sensor_objid          2 
+  sensor_objid          1 
   sensor_reftype        0 
   sensor_refid          -1 
   sensor_dim            1 
@@ -1053,7 +1091,7 @@ SENSOR 1:
   sensor_datatype       0 
   sensor_needstage      2 
   sensor_objtype        3 
-  sensor_objid          2 
+  sensor_objid          1 
   sensor_reftype        0 
   sensor_refid          -1 
   sensor_dim            1 
