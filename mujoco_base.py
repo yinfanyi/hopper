@@ -17,24 +17,6 @@ class MuJoCoBase():
         self.cam = mj.MjvCamera()                        # Abstract camera
         self.opt = mj.MjvOption()                        # visualization options
 
-        # Init GLFW, create window, make OpenGL context current, request v-sync
-        glfw.init()
-        self.window = glfw.create_window(1200, 900, "Demo", None, None)
-        glfw.make_context_current(self.window)
-        glfw.swap_interval(1)
-
-        # initialize visualization data structures
-        mj.mjv_defaultCamera(self.cam)
-        mj.mjv_defaultOption(self.opt)
-        self.scene = mj.MjvScene(self.model, maxgeom=10000)
-        self.context = mj.MjrContext(
-            self.model, mj.mjtFontScale.mjFONTSCALE_150.value)
-
-        # install GLFW mouse and keyboard callbacks
-        glfw.set_key_callback(self.window, self.keyboard)
-        glfw.set_cursor_pos_callback(self.window, self.mouse_move)
-        glfw.set_mouse_button_callback(self.window, self.mouse_button)
-        glfw.set_scroll_callback(self.window, self.scroll)
 
     def keyboard(self, window, key, scancode, act, mods):
         if act == glfw.PRESS and key == glfw.KEY_BACKSPACE:

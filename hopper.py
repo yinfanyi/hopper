@@ -9,17 +9,17 @@ from mujoco.glfw import glfw
 from numpy.linalg import inv
 from scipy.spatial.transform import Rotation as R
 
-
 from mujoco_base import MuJoCoBase
 
 # TODO:
 # 增加至两条弹簧的现象
-# 多次实验 记录每次跳跃最大高度和弹簧刚度的关系
-# 在空中：
+# 多次实验 记录每次跳跃最大高度和弹簧刚度的关系 多线程
+# 数据从1s开始记录：方案1 直接从1秒开始记录数据 方案2 记录降落下来时的qoos 查看mujoco函数 
+# 刚体的刚度系数如何改变 海绵
 
 
-# 驱动器直接使用motor如何控制 麻烦
-# equality 如何hinge连接 weld夹心饼
+# 驱动器直接使用motor如何控制
+# equality 如何hinge连接 weld夹心
 # 获得质心的位置速度加速度 不容易
 
 
@@ -50,6 +50,7 @@ class HopperData:
         # 其他
         self.spring_length_datas = []   # 弹簧长度
         self.theta_datas = []  # 小腿leg连杆与地面的夹角
+        self.site_imu_pos_datas = []
         
     def clear_data(self):
         """
@@ -128,11 +129,18 @@ class HopperData:
         plt.legend()
         plt.draw()
         
+        # plt.subplot(row, column, 6)
+        # plt.plot(self.time_datas, self.theta_datas, label='theta')
+        # plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_pos_sensor')
+        # plt.xlabel('Time')
+        # plt.ylabel('angle')
+        # plt.legend()
+        # plt.draw()
+        
         plt.subplot(row, column, 6)
-        plt.plot(self.time_datas, self.theta_datas, label='theta')
-        plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_pos_sensor')
+        plt.plot(self.time_datas, self.site_imu_pos_datas, label='above_pole_z')
         plt.xlabel('Time')
-        plt.ylabel('angle')
+        plt.ylabel('z')
         plt.legend()
         plt.draw()
         
@@ -177,12 +185,18 @@ class HopperData:
         plt.ylabel('ground_force')
         plt.legend()
         
+        # plt.subplot(row, column, 6)
+        # plt.plot(self.time_datas, self.theta_datas, label='theta')
+        # plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_pos_sensor')
+        # plt.xlabel('Time')
+        # plt.ylabel('angle')
+        # plt.legend()
         plt.subplot(row, column, 6)
-        plt.plot(self.time_datas, self.theta_datas, label='theta')
-        plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_pos_sensor')
+        plt.plot(self.time_datas, self.site_imu_pos_datas, label='above_pole_z')
         plt.xlabel('Time')
-        plt.ylabel('angle')
+        plt.ylabel('z')
         plt.legend()
+        plt.draw()
         
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -195,20 +209,38 @@ class Hopper1(MuJoCoBase):
         self.simend = 30.0  # 停止时间
         self.Hz = 20
         self.is_plot_data = True
-        glfw.set_key_callback(self.window, self.keyboard)
+        self.is_render = True
         self.fsm = None
         # self.step_no = 0
         # 储存用于画图和分析的数据
         self.hopperdata = HopperData()
-        self.start_time = time.time()
-
+        
     def reset(self):
-        # Set camera configuration
-        self.cam.azimuth = 89.608063
-        self.cam.elevation = -11.588379
-        self.cam.distance = 5.0
-        self.cam.lookat = np.array([0.0, 0.0, 1.5])
+        if (self.is_render):
+            # Init GLFW, create window, make OpenGL context current, request v-sync
+            glfw.init()
+            self.window = glfw.create_window(1200, 900, "Demo", None, None)
+            glfw.make_context_current(self.window)
+            glfw.swap_interval(1)
+            # initialize visualization data structures
+            mj.mjv_defaultCamera(self.cam)
+            mj.mjv_defaultOption(self.opt)
+            self.scene = mj.MjvScene(self.model, maxgeom=10000)
+            self.context = mj.MjrContext(
+                self.model, mj.mjtFontScale.mjFONTSCALE_150.value)
+            # install GLFW mouse and keyboard callbacks
+            glfw.set_key_callback(self.window, self.keyboard)
+            glfw.set_cursor_pos_callback(self.window, self.mouse_move)
+            glfw.set_mouse_button_callback(self.window, self.mouse_button)
+            glfw.set_scroll_callback(self.window, self.scroll)
+            glfw.set_key_callback(self.window, self.keyboard)
+            # Set camera configuration
+            self.cam.azimuth = 89.608063
+            self.cam.elevation = -11.588379
+            self.cam.distance = 5.0
+            self.cam.lookat = np.array([0.0, 0.0, 1.5])
         # self.model.opt.gravity = [0,0,-1]
+        mj.mj_resetData(self.model, self.data)
         self.fsm = FSM_TAKEOFF # 有限状态机（Finite State Machine）
         # self.step_no = 0
         # pservo-hip
@@ -281,7 +313,8 @@ class Hopper1(MuJoCoBase):
         during_time = self.data.time - self.start_time
         # print(during_time)
         # print(spring_length)
-        if self.fsm == FSM_TAKEOFF and spring_length > 1.64 and during_time > 1:
+        # if self.fsm == FSM_TAKEOFF and spring_length > 1.64 and during_time > 1:
+        if self.fsm == FSM_TAKEOFF and during_time > 1:
             self.fsm = FSM_AIR
 
         if self.fsm == FSM_AIR:
@@ -293,8 +326,8 @@ class Hopper1(MuJoCoBase):
             self.set_velocity_servo(vservo_hip_right_id,10)
 
         if self.fsm == FSM_TAKEOFF:
-            self.data.ctrl[pservo_hip_left_id] = -0.7
-            self.data.ctrl[pservo_hip_right_id] = 0.7
+            self.data.ctrl[pservo_hip_left_id] = -0.5
+            self.data.ctrl[pservo_hip_right_id] = 0.5
             self.set_position_servo(pservo_hip_left_id, 3000)
             self.set_velocity_servo(vservo_hip_left_id,100)
             self.set_position_servo(pservo_hip_right_id, 3000)
@@ -304,6 +337,8 @@ class Hopper1(MuJoCoBase):
         """
         收集数据
         """
+        if (self.data.time) < 0.9:
+            return
         spring_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_TENDON, "tendon1")
         spring_length = self.data.ten_length[spring_siteid]
         # height = self.data.qpos[8] - self.model.qpos0[8]    # 底座的位置-初始位置，为了让时间为0时高度为0
@@ -320,6 +355,9 @@ class Hopper1(MuJoCoBase):
         self.hopperdata.hip_vel_sensor_datas.append(self.data.sensordata[1])
         self.hopperdata.acceleration_sensor_datas.append(self.data.sensordata[4])
         self.hopperdata.velocity_sensor_datas.append(self.data.sensordata[7])
+        imu_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_SITE, "imu")
+        self.hopperdata.site_imu_pos_datas.append(self.data.site_xpos[imu_siteid][2])
+        # print(self.data.site_xpos)
         q = self.data.xquat[5]
         if np.array_equal(q, np.array([0, 0, 0, 0])):
             self.hopperdata.theta_datas.append(None)
@@ -338,33 +376,50 @@ class Hopper1(MuJoCoBase):
         
     def simulate(self):
         self.start_time = self.data.time
-        while not glfw.window_should_close(self.window):
-            
-            self.bind_data()    # 收集数据
-            
-            current_simstart = self.data.time   # 当前一帧的开始时间
-            while (self.data.time - current_simstart < 1.0/self.Hz):
-                mj.mj_step(self.model, self.data)            
-            if self.data.time >= self.simend:
-                break
-            
-            # get framebuffer viewport
-            viewport_width, viewport_height = glfw.get_framebuffer_size(
-                self.window)
-            viewport = mj.MjrRect(0, 0, viewport_width, viewport_height)
+        if (self.is_render):
+            while not glfw.window_should_close(self.window):
+                
+                self.bind_data()    # 收集数据
+                
+                current_simstart = self.data.time   # 当前一帧的开始时间
+                while (self.data.time - current_simstart < 1.0/self.Hz):
+                    mj.mj_step(self.model, self.data)            
+                if self.data.time >= self.simend:
+                    break
+                
+                # get framebuffer viewport
+                viewport_width, viewport_height = glfw.get_framebuffer_size(
+                    self.window)
+                viewport = mj.MjrRect(0, 0, viewport_width, viewport_height)
 
-            # Update scene and render
-            self.cam.lookat[0] = self.data.qpos[0]
-            mj.mjv_updateScene(self.model, self.data, self.opt, None, self.cam,
-                               mj.mjtCatBit.mjCAT_ALL.value, self.scene)
-            mj.mjr_render(viewport, self.scene, self.context)
-            # swap OpenGL buffers (blocking call due to v-sync)
-            glfw.swap_buffers(self.window)
-            # process pending GUI events, call GLFW callbacks
-            glfw.poll_events()
-            if self.is_plot_data:
-                self.hopperdata.plot_data()         
-        glfw.terminate()
+                # Update scene and render
+                self.cam.lookat[0] = self.data.qpos[0]
+                mj.mjv_updateScene(self.model, self.data, self.opt, None, self.cam,
+                                mj.mjtCatBit.mjCAT_ALL.value, self.scene)
+                mj.mjr_render(viewport, self.scene, self.context)
+                # swap OpenGL buffers (blocking call due to v-sync)
+                glfw.swap_buffers(self.window)
+                # process pending GUI events, call GLFW callbacks
+                glfw.poll_events()
+                if self.is_plot_data:
+                    self.hopperdata.plot_data()         
+            glfw.terminate()
+        else:
+            while True:
+                self.bind_data()    # 收集数据
+                current_simstart = self.data.time   # 当前一帧的开始时间
+                while (self.data.time - current_simstart < 1.0/self.Hz):
+                    mj.mj_step(self.model, self.data)            
+                if self.data.time >= self.simend:
+                    break
+                if self.is_plot_data:
+                    self.hopperdata.plot_data()
+            self.hopperdata.save_data()
+            self.hopperdata.save_image()
+            model_text_dir = "./temp/model.txt"
+            data_text_dir = "./temp/data.txt"
+            mj.mj_printModel(self.model, model_text_dir)
+            mj.mj_printData(self.model, self.data, data_text_dir)  
     
     def initial_state(self):
         # self.model.body_pos[1,2] = 3.5
@@ -397,6 +452,10 @@ class Hopper1(MuJoCoBase):
 def main():
     xml_path = "./xml/hopper1/scene2.xml"
     sim = Hopper1(xml_path)
+    sim.simend = 2
+    sim.Hz = 20
+    sim.is_plot_data = False
+    # sim.is_render = False
     sim.reset()
     sim.simulate()
     
