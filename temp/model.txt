@@ -1,4 +1,4 @@
-MuJoCo version 2.3.7
+MuJoCo version 3.0.1
 model name     cassie scene
 
 nq                    18
@@ -6,6 +6,7 @@ nv                    16
 nu                    4
 nbody                 7
 nbvh                  7
+nbvhstatic            7
 njnt                  6
 ngeom                 7
 nsite                 4
@@ -19,6 +20,7 @@ ntendon               1
 nwrap                 2
 nsensor               5
 nnames                369
+npaths                1
 nnames_map            94
 nM                    72
 nD                    128
@@ -26,34 +28,40 @@ nB                    64
 nemax                 6
 njmax                 -1
 nconmax               -1
-nstack                1835008
+ntree                 2
 nsensordata           11
-nbuffer               5008184
+narena                14680064
+nbuffer               5008641
 
 timestep              0.0001  
 apirate               1e+02   
 impratio              1       
 tolerance             1e-08   
+ls_tolerance          0.01    
 noslip_tolerance      1e-06   
 mpr_tolerance         1e-06   
 density               0       
 viscosity             0       
 o_margin              0       
 integrator            1
-collision             0
 cone                  0
 jacobian              2
 solver                2
 iterations            100
+ls_iterations         50
 noslip_iterations     0
 mpr_iterations        50
 disableflags          0
-enableflags           10
+enableflags           18
+disableactuator       0
+sdf_initpoints        40
+sdf_iterations        10
 gravity               0         0        -10       
 wind                  0         0         0        
 magnetic              0        -0.5       0        
 o_solref              0.02      1        
 o_solimp              0.9       0.95      0.001     0.5       2        
+o_friction            0         0         0         0.0001    0.0001   
 
 totalmass             3       
 
@@ -78,6 +86,7 @@ BODY 0:
   body_jntadr           -1 
   body_dofnum           0 
   body_dofadr           -1 
+  body_treeid           -1 
   body_geomnum          1 
   body_geomadr          0 
   body_simple           1 
@@ -91,7 +100,10 @@ BODY 0:
   body_inertia          0         0         0        
   body_invweight0       0         0        
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      15 
   body_bvhadr           0 
   body_bvhnum           1 
 
@@ -105,6 +117,7 @@ BODY 1:
   body_jntadr           0 
   body_dofnum           6 
   body_dofadr           0 
+  body_treeid           0 
   body_geomnum          1 
   body_geomadr          1 
   body_simple           0 
@@ -118,7 +131,10 @@ BODY 1:
   body_inertia          0.0069    0.082     0.088    
   body_invweight0       0.89      7.7      
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           1 
   body_bvhnum           1 
 
@@ -132,6 +148,7 @@ BODY 2:
   body_jntadr           1 
   body_dofnum           1 
   body_dofadr           6 
+  body_treeid           0 
   body_geomnum          1 
   body_geomadr          2 
   body_simple           0 
@@ -145,7 +162,10 @@ BODY 2:
   body_inertia          0.0049    0.0049    0.00063  
   body_invweight0       0.88      21       
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           2 
   body_bvhnum           1 
 
@@ -159,6 +179,7 @@ BODY 3:
   body_jntadr           2 
   body_dofnum           1 
   body_dofadr           7 
+  body_treeid           0 
   body_geomnum          1 
   body_geomadr          3 
   body_simple           0 
@@ -172,7 +193,10 @@ BODY 3:
   body_inertia          0.0049    0.0049    0.00063  
   body_invweight0       1.4       30       
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           3 
   body_bvhnum           1 
 
@@ -186,6 +210,7 @@ BODY 4:
   body_jntadr           3 
   body_dofnum           1 
   body_dofadr           8 
+  body_treeid           0 
   body_geomnum          1 
   body_geomadr          4 
   body_simple           0 
@@ -199,7 +224,10 @@ BODY 4:
   body_inertia          0.0049    0.0049    0.00063  
   body_invweight0       0.88      21       
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           4 
   body_bvhnum           1 
 
@@ -213,6 +241,7 @@ BODY 5:
   body_jntadr           4 
   body_dofnum           1 
   body_dofadr           9 
+  body_treeid           0 
   body_geomnum          1 
   body_geomadr          5 
   body_simple           0 
@@ -226,7 +255,10 @@ BODY 5:
   body_inertia          0.0049    0.0049    0.00063  
   body_invweight0       1.4       30       
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           5 
   body_bvhnum           1 
 
@@ -240,6 +272,7 @@ BODY 6:
   body_jntadr           5 
   body_dofnum           6 
   body_dofadr           10 
+  body_treeid           1 
   body_geomnum          1 
   body_geomadr          6 
   body_simple           1 
@@ -253,9 +286,48 @@ BODY 6:
   body_inertia          0.0071    0.06      0.067    
   body_invweight0       2         58       
   body_gravcomp         0        
+  body_margin           0        
   body_plugin           -1 
+  body_contype          1 
+  body_conaffinity      1 
   body_bvhadr           6 
   body_bvhnum           1 
+
+
+BVH 0:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            0 
+
+BVH 1:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            1 
+
+BVH 2:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            2 
+
+BVH 3:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            3 
+
+BVH 4:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            4 
+
+BVH 5:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            5 
+
+BVH 6:
+  bvh_depth             0 
+  bvh_child             -1  -1 
+  bvh_nodeid            6 
 
 
 JOINT 0:
@@ -371,6 +443,7 @@ DOF 0:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          -1 
+  dof_treeid            0 
   dof_Madr              0 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -385,6 +458,7 @@ DOF 1:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          0 
+  dof_treeid            0 
   dof_Madr              1 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -399,6 +473,7 @@ DOF 2:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          1 
+  dof_treeid            0 
   dof_Madr              3 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -413,6 +488,7 @@ DOF 3:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          2 
+  dof_treeid            0 
   dof_Madr              6 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -427,6 +503,7 @@ DOF 4:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          3 
+  dof_treeid            0 
   dof_Madr              10 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -441,6 +518,7 @@ DOF 5:
   dof_bodyid            1 
   dof_jntid             0 
   dof_parentid          4 
+  dof_treeid            0 
   dof_Madr              15 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -455,6 +533,7 @@ DOF 6:
   dof_bodyid            2 
   dof_jntid             1 
   dof_parentid          5 
+  dof_treeid            0 
   dof_Madr              21 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -469,6 +548,7 @@ DOF 7:
   dof_bodyid            3 
   dof_jntid             2 
   dof_parentid          6 
+  dof_treeid            0 
   dof_Madr              28 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -483,6 +563,7 @@ DOF 8:
   dof_bodyid            4 
   dof_jntid             3 
   dof_parentid          5 
+  dof_treeid            0 
   dof_Madr              36 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -497,6 +578,7 @@ DOF 9:
   dof_bodyid            5 
   dof_jntid             4 
   dof_parentid          8 
+  dof_treeid            0 
   dof_Madr              43 
   dof_simplenum         0 
   dof_solref            0.02      1        
@@ -511,6 +593,7 @@ DOF 10:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          -1 
+  dof_treeid            1 
   dof_Madr              51 
   dof_simplenum         6 
   dof_solref            0.02      1        
@@ -525,6 +608,7 @@ DOF 11:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          10 
+  dof_treeid            1 
   dof_Madr              52 
   dof_simplenum         5 
   dof_solref            0.02      1        
@@ -539,6 +623,7 @@ DOF 12:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          11 
+  dof_treeid            1 
   dof_Madr              54 
   dof_simplenum         4 
   dof_solref            0.02      1        
@@ -553,6 +638,7 @@ DOF 13:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          12 
+  dof_treeid            1 
   dof_Madr              57 
   dof_simplenum         3 
   dof_solref            0.02      1        
@@ -567,6 +653,7 @@ DOF 14:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          13 
+  dof_treeid            1 
   dof_Madr              61 
   dof_simplenum         2 
   dof_solref            0.02      1        
@@ -581,6 +668,7 @@ DOF 15:
   dof_bodyid            6 
   dof_jntid             5 
   dof_parentid          14 
+  dof_treeid            1 
   dof_Madr              66 
   dof_simplenum         1 
   dof_solref            0.02      1        
@@ -603,6 +691,7 @@ GEOM 0:
   geom_matid            0 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -629,6 +718,7 @@ GEOM 1:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -655,6 +745,7 @@ GEOM 2:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -681,6 +772,7 @@ GEOM 3:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -707,6 +799,7 @@ GEOM 4:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -733,6 +826,7 @@ GEOM 5:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -759,6 +853,7 @@ GEOM 6:
   geom_matid            -1 
   geom_group            0 
   geom_priority         0 
+  geom_plugin           -1 
   geom_sameframe        1 
   geom_solmix           1        
   geom_solref           0.02      1        
@@ -894,27 +989,27 @@ MATERIAL 0:
 
 EXCLUDE 0:
   name                  e0
-  exclude_signature     131075 
+  exclude_signature     65538 
 
 EXCLUDE 1:
   name                  e1
-  exclude_signature     131077 
+  exclude_signature     65540 
 
 EXCLUDE 2:
   name                  e2
-  exclude_signature     196612 
+  exclude_signature     131075 
 
 EXCLUDE 3:
   name                  e4
-  exclude_signature     262151 
+  exclude_signature     196614 
 
 EXCLUDE 4:
   name                  e3
-  exclude_signature     327686 
+  exclude_signature     262149 
 
 EXCLUDE 5:
   name                  e5
-  exclude_signature     393223 
+  exclude_signature     327686 
 
 
 EQUALITY 0:
@@ -922,7 +1017,7 @@ EQUALITY 0:
   eq_type               0 
   eq_obj1id             3 
   eq_obj2id             6 
-  eq_active             1 
+  eq_active0            1 
   eq_solref             0.02      1        
   eq_solimp             0.9       0.95      0.001     0.5       2        
   eq_data               0         0        -0.17     -0.47      0         0.034     0         0         0         0         1        
@@ -932,7 +1027,7 @@ EQUALITY 1:
   eq_type               0 
   eq_obj1id             5 
   eq_obj2id             6 
-  eq_active             1 
+  eq_active0            1 
   eq_solref             0.02      1        
   eq_solimp             0.9       0.95      0.001     0.5       2        
   eq_data               0         0        -0.17      0.47      0         0.034     0         0         0         0         1        
@@ -952,16 +1047,17 @@ TENDON 0:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0.1       10       
   tendon_margin         0        
-  tendon_stiffness      1e+03    
-  tendon_damping        0.01     
+  tendon_stiffness      50       
+  tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.25      0.25     
   tendon_length0        1.5      
   tendon_invweight0     3.1      
   tendon_rgba           0.95      0.3       0.3       1        
-  path         
-    3 1  0       
-    3 2  0       
+  path
+    type  objid  prm
+    3     1      0       
+    3     2      0       
 
 
 
@@ -979,8 +1075,9 @@ ACTUATOR 0:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      3e+03     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0        -3e+03     0         0         0         0         0         0         0         0        
+  actuator_gainprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_actearly     0 
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
@@ -1005,8 +1102,9 @@ ACTUATOR 1:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      1e+02     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0         0        -1e+02     0         0         0         0         0         0         0        
+  actuator_gainprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_actearly     0 
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
@@ -1031,8 +1129,9 @@ ACTUATOR 2:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      3e+03     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0        -3e+03     0         0         0         0         0         0         0         0        
+  actuator_gainprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_actearly     0 
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
@@ -1057,8 +1156,9 @@ ACTUATOR 3:
   actuator_forcelimited 0 
   actuator_actlimited   0 
   actuator_dynprm       1         0         0         0         0         0         0         0         0         0        
-  actuator_gainprm      1e+02     0         0         0         0         0         0         0         0         0        
-  actuator_biasprm      0         0        -1e+02     0         0         0         0         0         0         0        
+  actuator_gainprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_biasprm      0         0         0         0         0         0         0         0         0         0        
+  actuator_actearly     0 
   actuator_ctrlrange    0         0        
   actuator_forcerange   0         0        
   actuator_actrange     0         0        
@@ -1072,7 +1172,7 @@ ACTUATOR 3:
 
 SENSOR 0:
   name                  hip_pos_sensor
-  sensor_type           8 
+  sensor_type           9 
   sensor_datatype       0 
   sensor_needstage      1 
   sensor_objtype        3 
@@ -1087,7 +1187,7 @@ SENSOR 0:
 
 SENSOR 1:
   name                  hip_vel_sensor
-  sensor_type           9 
+  sensor_type           10 
   sensor_datatype       0 
   sensor_needstage      2 
   sensor_objtype        3 

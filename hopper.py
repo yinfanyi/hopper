@@ -14,13 +14,10 @@ from mujoco_base import MuJoCoBase
 # TODO:
 # 增加至两条弹簧的现象
 # 多次实验 记录每次跳跃最大高度和弹簧刚度的关系 多线程
-# 数据从1s开始记录：方案1 直接从1秒开始记录数据 方案2 记录降落下来时的qoos 查看mujoco函数 
-# 刚体的刚度系数如何改变 海绵
+# 消除抖动问题：夹心饼
+# 视觉分组
 
-
-# 驱动器直接使用motor如何控制
-# equality 如何hinge连接 weld夹心
-# 获得质心的位置速度加速度 不容易
+# 驱动器直接使用motor如何控制 参数含义
 
 
 FSM_AIR = 0
@@ -90,6 +87,7 @@ class HopperData:
         column = 1
         plt.figure(1)
         plt.clf()
+        plt.grid(True)
         
         plt.subplot(row, column, 1)
         plt.plot(self.time_datas, self.kinetic_energy_datas, label='Kinetic Energy')
@@ -149,9 +147,10 @@ class HopperData:
     def save_image(self, save_dir:str = "./temp/image/"):
         row = 6
         column = 1
-        plt.figure(2, figsize=(5, 8))
-        
+        plt.figure(2, figsize=(5, 10))
+        # plt.figure(2)
         plt.subplot(row, column, 1)
+        plt.grid(True)
         plt.plot(self.time_datas, self.kinetic_energy_datas, label='Kinetic Energy')
         plt.plot(self.time_datas, self.potential_energy_datas, label='Potential Energy')
         plt.plot(self.time_datas, self.total_energy_datas, label='Total Energy')
@@ -160,24 +159,28 @@ class HopperData:
         plt.legend()
         
         plt.subplot(row, column, 2)
+        plt.grid(True)
         plt.plot(self.time_datas, self.jump_height_datas, label='foot_height')
         plt.xlabel('Time')
         plt.ylabel('position')
         plt.legend()
         
         plt.subplot(row, column, 3)
+        plt.grid(True)
         plt.plot(self.time_datas, self.velocity_sensor_datas, label='velocity')
         plt.xlabel('Time')
         plt.ylabel('velocity')
         plt.legend()
         
         plt.subplot(row, column, 4)
+        plt.grid(True)
         plt.plot(self.time_datas, self.acceleration_sensor_datas, label='acceleration')
         plt.xlabel('Time')
         plt.ylabel('acceleration')
         plt.legend()
         
         plt.subplot(row, column, 5)
+        plt.grid(True)
         plt.plot(self.time_datas, self.ground_force_x_sensor_datas, label='ground_force_x')
         plt.plot(self.time_datas, self.ground_force_y_sensor_datas, label='ground_force_y')
         plt.plot(self.time_datas, self.ground_force_z_sensor_datas, label='ground_force_z')
@@ -191,7 +194,9 @@ class HopperData:
         # plt.xlabel('Time')
         # plt.ylabel('angle')
         # plt.legend()
+
         plt.subplot(row, column, 6)
+        plt.grid(True)
         plt.plot(self.time_datas, self.site_imu_pos_datas, label='above_pole_z')
         plt.xlabel('Time')
         plt.ylabel('z')
@@ -320,10 +325,10 @@ class Hopper1(MuJoCoBase):
         if self.fsm == FSM_AIR:
             self.data.ctrl[pservo_hip_left_id] = 0
             self.data.ctrl[pservo_hip_right_id] = 0
-            self.set_position_servo(pservo_hip_left_id, 10)
-            self.set_velocity_servo(vservo_hip_left_id,10)
-            self.set_position_servo(pservo_hip_right_id, 10)
-            self.set_velocity_servo(vservo_hip_right_id,10)
+            self.set_position_servo(pservo_hip_left_id, 0)
+            self.set_velocity_servo(vservo_hip_left_id,0)
+            self.set_position_servo(pservo_hip_right_id, 0)
+            self.set_velocity_servo(vservo_hip_right_id,0)
 
         if self.fsm == FSM_TAKEOFF:
             self.data.ctrl[pservo_hip_left_id] = -0.5
@@ -337,7 +342,7 @@ class Hopper1(MuJoCoBase):
         """
         收集数据
         """
-        if (self.data.time) < 0.9:
+        if (self.data.time) < 0.95:
             return
         spring_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_TENDON, "tendon1")
         spring_length = self.data.ten_length[spring_siteid]
@@ -373,6 +378,12 @@ class Hopper1(MuJoCoBase):
         self.hopperdata.ground_force_x_sensor_datas.append(result[0,0])
         self.hopperdata.ground_force_y_sensor_datas.append(result[1,0])
         self.hopperdata.ground_force_z_sensor_datas.append(result[2,0])
+
+        # kinetic_energy = 0.5*3*self.data.sensordata[7]**2
+        # potential_energy = 0.5*1000*(spring_length-0.25)**2+3*10*self.data.site_xpos[imu_siteid][2]
+        # self.hopperdata.kinetic_energy_datas.append(kinetic_energy)
+        # self.hopperdata.potential_energy_datas.append(potential_energy)
+        # self.hopperdata.total_energy_datas.append(kinetic_energy + potential_energy)
         
     def simulate(self):
         self.start_time = self.data.time
@@ -452,8 +463,8 @@ class Hopper1(MuJoCoBase):
 def main():
     xml_path = "./xml/hopper1/scene2.xml"
     sim = Hopper1(xml_path)
-    sim.simend = 2
-    sim.Hz = 20
+    sim.simend = 1.5
+    sim.Hz = 100
     sim.is_plot_data = False
     # sim.is_render = False
     sim.reset()
