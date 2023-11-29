@@ -247,15 +247,6 @@ class Hopper1(MuJoCoBase):
         # self.model.opt.gravity = [0,0,-1]
         mj.mj_resetData(self.model, self.data)
         self.fsm = FSM_TAKEOFF # 有限状态机（Finite State Machine）
-        # self.step_no = 0
-        # pservo-hip
-        # self.set_position_servo(0, 100)
-        # vservo-hip
-        # self.set_velocity_servo(1, 10)
-        # pservo-knee
-        # self.set_position_servo(2, 1000)
-        # vservo-knee
-        # self.set_velocity_servo(3, 0)
         mj.set_mjcb_control(self.controller)
     
     def keyboard(self, window, key, scancode, act, mods):
@@ -412,7 +403,7 @@ class Hopper1(MuJoCoBase):
                 glfw.swap_buffers(self.window)
                 # process pending GUI events, call GLFW callbacks
                 glfw.poll_events()
-                if self.is_plot_data:
+                if self.is_plot_data and self.data.time> 0.95:
                     self.hopperdata.plot_data()         
             glfw.terminate()
         else:
@@ -463,10 +454,10 @@ class Hopper1(MuJoCoBase):
 def main():
     xml_path = "./xml/hopper1/scene2.xml"
     sim = Hopper1(xml_path)
-    sim.simend = 1.5
+    sim.simend = 3
     sim.Hz = 100
     sim.is_plot_data = False
-    # sim.is_render = False
+    sim.is_render = False
     sim.reset()
     sim.simulate()
     

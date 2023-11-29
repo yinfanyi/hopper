@@ -1,6 +1,6 @@
 <mujoco>
 	<!-- 根据dsh提供的参数建模 -->
-	<option timestep="0.00001" integrator="RK4" gravity="0 0 -10">
+	<option timestep="0.0001" integrator="RK4" gravity="0 0 -10" o_friction="0 0 0">
 		<flag sensornoise="enable" contact="enable" energy="enable" />
 	</option>
 
@@ -33,8 +33,6 @@
 		<body name="hopper" pos="0 0 2">
 			<!-- 约束跳跃机器人只在x和z方向自由 -->
 			<freejoint/> 
-			<!-- <joint name="x" type="slide" pos="0 0 0" axis="1 0 0" /> -->
-			<!-- <joint name="z" type="slide" pos="0 0 0" axis="0 0 1" /> -->
 			<geom type="box" size=".7 .2 .04" rgba=".9 .9 .9 1" mass="0.5" />
 			<site name="imu" size="0.01" pos="0 0 0" />
 			<body name="thigh_left" pos="-0.6179 0 -0.1179" euler="0 45 0">
@@ -44,6 +42,10 @@
 				<body name="leg_left" pos="0.1667 0 -0.1179" euler="0 -90 0">
 					<joint name="knee_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" />
 					<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
+					<body name="foot_left"  pos="0 0 -0.1667" euler="0 -45 0">
+						<joint name="ankle_left" type="hinge" pos="0 0 0" axis="0 -1 0" />
+						<geom type="box" size=".05 .2 .05" rgba=".9 .9 .0 1" mass="0.2"/>
+					</body>
 				</body>
 			</body>
 			<body name="thigh_right" pos="0.6179 0 -0.1179" euler="0 -45 0">
@@ -53,13 +55,15 @@
 				<body name="leg_right" pos="-0.1667 0 -0.1179" euler="0 90 0">
 					<joint name="knee_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0"/>
 					<geom type="cylinder" size=".05 .1667" rgba="0 .9 0 1" mass="0.5"/>
+					<body name="foot_right"  pos="0 0 -0.1667" euler="0 45 0">
+						<joint name="ankle_right" type="hinge" pos="0 0 0" axis="0 -1 0" />
+						<geom type="box" size=".05 .2 .05" rgba=".9 .9 .0 1" mass="0.2"/>
+					</body>
 				</body>
 			</body>
 		</body>
-		<body name="foot" pos="0 0 1.5286">
+		<body name="foot_middle" pos="0 0 1.56">
 			<freejoint />
-			<!-- <joint name="x1" type="slide" pos="0 0 0" axis="1 0 0" /> -->
-			<!-- <joint name="z1" type="slide" pos="0 0 0" axis="0 0 1" /> -->
 			<geom type="box" size=".6 .2 .05" rgba=".9 .9 .0 1" mass="0.5" />
 			<site name="foot_ground" pos="0 0 -0.055" />
 		</body>
@@ -70,14 +74,16 @@
 		<exclude name="e1" body1="hopper" body2="thigh_right" />
 		<exclude name="e2" body1="thigh_left" body2="leg_left" />
 		<exclude name="e3" body1="thigh_right" body2="leg_right" />
-		<exclude name="e4" body1="leg_left" body2="foot" />
-		<exclude name="e5" body1="leg_right" body2="foot" />
+		<exclude name="e4" body1="leg_left" body2="foot_middle" />
+		<exclude name="e5" body1="leg_right" body2="foot_middle" />
+		<exclude name="e6" body1="foot_left" body2="foot_middle" />
+		<exclude name="e7" body1="foot_right" body2="foot_middle" />
 		<!-- <exclude name="e6" body1="hopper" body2="foot" /> -->
 	</contact>
 
 	<equality>
-		<connect name="c1" body1="leg_left" body2="foot" anchor="0 0 -0.1667" />
-		<connect name="c2" body1="leg_right" body2="foot" anchor="0 0 -0.1667" />
+		<weld name="c1" body1="foot_left" body2="foot_middle"/>
+		<weld name="c2" body1="foot_right" body2="foot_middle" />
 	</equality>
 
 	<tendon>
