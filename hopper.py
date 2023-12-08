@@ -15,6 +15,8 @@ from mujoco_base import MuJoCoBase
 # 增加至两条弹簧的现象
 # 如何方便地进行控制
 # 持续优化，如何简化程序
+# 如何加进图条
+# pyside图形化界面
 
 FSM_AIR = 0
 FSM_STANCE = 1
