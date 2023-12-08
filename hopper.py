@@ -13,7 +13,8 @@ from mujoco_base import MuJoCoBase
 
 # TODO:
 # 增加至两条弹簧的现象
-# 多次实验 记录每次跳跃最大高度和弹簧刚度的关系 多线程
+# 如何方便地进行控制
+# 持续优化，如何简化程序
 
 FSM_AIR = 0
 FSM_STANCE = 1
@@ -233,6 +234,8 @@ class Hopper1(MuJoCoBase):
         self.simend = 30.0  # 停止时间
         self.Hz = 20
         self.is_plot_data = True
+        self.is_save_image = True
+        self.is_save_data = True
         self.is_render = True
         self.fsm = None
         # self.step_no = 0
@@ -282,8 +285,10 @@ class Hopper1(MuJoCoBase):
             self.hopperdata.clear_data()
         if act == glfw.PRESS and key == glfw.KEY_ESCAPE: 
             # 默认按escape退出即保存所有数据
-            self.hopperdata.save_data()
-            self.hopperdata.save_image()
+            if self.is_save_data:
+                self.hopperdata.save_data()
+            if self.is_save_image:
+                self.hopperdata.save_image()
             model_text_dir = "./temp/model.txt"
             data_text_dir = "./temp/data.txt"
             mj.mj_printModel(self.model, model_text_dir)
@@ -469,17 +474,20 @@ class Hopper1(MuJoCoBase):
                 self.bind_data()    # 收集数据
                 current_simstart = self.data.time   # 当前一帧的开始时间
                 while (self.data.time - current_simstart < 1.0/self.Hz):
-                    mj.mj_step(self.model, self.data)            
+                    mj.mj_step(self.model, self.data)
+                # print(self.data.energy[1])   
                 if self.data.time >= self.simend:
                     break
                 if self.is_plot_data:
                     self.hopperdata.plot_data()
-            self.hopperdata.save_data()
-            self.hopperdata.save_image()
-            model_text_dir = "./temp/model.txt"
-            data_text_dir = "./temp/data.txt"
-            mj.mj_printModel(self.model, model_text_dir)
-            mj.mj_printData(self.model, self.data, data_text_dir)  
+            if self.is_save_image:
+                self.hopperdata.save_image()
+            if self.is_save_data:
+                self.hopperdata.save_data()
+                model_text_dir = "./temp/model.txt"
+                data_text_dir = "./temp/data.txt"
+                mj.mj_printModel(self.model, model_text_dir)
+                mj.mj_printData(self.model, self.data, data_text_dir)  
     
     def initial_state(self):
         # self.model.body_pos[1,2] = 3.5
@@ -515,6 +523,7 @@ def main():
     sim.simend = 1.5
     sim.Hz = 20
     sim.is_plot_data = False
+    sim.is_save_image = False
     sim.is_render = False
     sim.reset()
     sim.simulate()

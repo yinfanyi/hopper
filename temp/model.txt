@@ -1047,7 +1047,7 @@ TENDON 0:
   tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
   tendon_range          0.1       10       
   tendon_margin         0        
-  tendon_stiffness      2.3e+02  
+  tendon_stiffness      50       
   tendon_damping        0        
   tendon_frictionloss   0        
   tendon_lengthspring   0.25      0.25     
