@@ -1,6 +1,6 @@
-<mujoco model="cassie scene">
+<mujoco>
 
-    <include file="hopper1.xml"/>
+    <include file="hopper2.xml"/>
   
     <statistic center="0 0 0.55" extent="1.1"/>
   

@@ -1,5 +1,5 @@
 <mujoco>
-	<!-- 根据dsh提供的参数建模 -->
+	<!-- 增加一根竖直布置的弹簧 -->
 	<option timestep="0.00001" integrator="RK4" gravity="0 0 -10">
 		<flag sensornoise="enable" contact="enable" energy="enable" />
 	</option>
@@ -12,12 +12,21 @@
 		<global azimuth="150" elevation="-20" />
 	</visual>
 
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+        <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
+          markrgb="0.8 0.8 0.8" width="300" height="300"/>
+        <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+      </asset>
+
 	<default>
 		<equality solref="0.005 1" />
 	</default>
 
 	<worldbody>
+        <light pos="0 0 3" dir="0 0 -1" directional="false"/>
 		<light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" />
+        <geom name="floor" size="0 0 .125" type="plane" material="groundplane" conaffinity="15" condim="3"/>
 		<body name="hopper" pos="0 0 2">
 			<!-- 约束跳跃机器人只在x和z方向自由 -->
 			<freejoint />
@@ -25,7 +34,7 @@
 			<site name="imu" size="0.01" pos="0 0 0" />
 			<body name="thigh_left" pos="-0.6179 0 -0.1179" euler="0 45 0">
 				<joint name="hip_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 130"
-					limited="true" />
+					limited="auto" />
 				<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
 				<site name="s_left" pos="0 0 -0.15" />
 				<body name="leg_left" pos="0.1667 0 -0.1179" euler="0 -90 0">
@@ -35,7 +44,7 @@
 			</body>
 			<body name="thigh_right" pos="0.6179 0 -0.1179" euler="0 -45 0">
 				<joint name="hip_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-130 45"
-					limited="true" />
+					limited="auto" />
 				<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
 				<site name="s_right" pos="0 0 -0.15" />
 				<body name="leg_right" pos="-0.1667 0 -0.1179" euler="0 90 0">
@@ -47,7 +56,7 @@
 		<body name="foot" pos="0 0 1.5757">
 			<freejoint />
 			<geom type="box" size=".6 .2 .05" rgba=".9 .9 .0 1" mass="0.5" />
-			<site name="foot_ground" pos="0 0 -0.055" />
+			<site name="foot_ground" pos="0 0 0" />
 		</body>
 	</worldbody>
 
@@ -58,6 +67,10 @@
 		<exclude name="e3" body1="thigh_right" body2="leg_right" />
 		<exclude name="e4" body1="leg_left" body2="foot" />
 		<exclude name="e5" body1="leg_right" body2="foot" />
+        <exclude name="e6" body1="hopper" body2="leg_right" />
+		<exclude name="e7" body1="hopper" body2="leg_left" />
+        <exclude name="e8" body1="thigh_left" body2="foot" />
+		<exclude name="e9" body1="thigh_right" body2="foot" />
 	</contact>
 
 	<equality>
@@ -67,10 +80,16 @@
 
 	<tendon>
 		<spatial name='tendon1' range="0.1 10" limited="true" width=".02" rgba=".95 .3 .3 1"
-			stiffness="50" springlength="0.25">
+			stiffness="50" springlength="0.5">
 			<site site="s_left" />
 			<site site="s_right" />
 		</spatial>
+        <spatial name='tendon2' range="0.1 10" limited="true" width=".02" rgba=".95 .6 .6 1"
+			stiffness="50" springlength="0.2">
+			<site site="imu" />
+			<site site="foot_ground" />
+		</spatial>
+
 	</tendon>
 
 	<actuator>

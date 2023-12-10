@@ -159,7 +159,8 @@ class HopperData:
     def save_image(self, save_dir:str = "./temp/image/"):
         row = 6
         column = 1
-        plt.figure(2, figsize=(5, 10))
+        plt.figure(2, figsize=(5, 11))
+        plt.clf()
         # plt.figure(2)
         plt.subplot(row, column, 1)
         plt.grid(True, linewidth=0.5)
@@ -173,13 +174,14 @@ class HopperData:
         plt.subplot(row, column, 2)
         plt.grid(True, linewidth=0.5)
         plt.plot(self.time_datas, self.jump_height_datas, label='foot_height')
+        plt.plot(self.time_datas, self.cm_pos_z_datas, label='cm_pos_z')
         plt.xlabel('Time')
         plt.ylabel('position')
         plt.legend()
         
         plt.subplot(row, column, 3)
         plt.grid(True, linewidth=0.5)
-        plt.plot(self.time_datas, self.velocity_sensor_datas, label='velocity')
+        # plt.plot(self.time_datas, self.velocity_sensor_datas, label='velocity')
         plt.plot(self.time_datas, self.cm_vel_z_datas, label='cm_velocity')
         plt.xlabel('Time')
         plt.ylabel('velocity')
@@ -187,7 +189,7 @@ class HopperData:
         
         plt.subplot(row, column, 4)
         plt.grid(True, linewidth=0.5)
-        plt.plot(self.time_datas, self.acceleration_sensor_datas, label='acceleration')
+        # plt.plot(self.time_datas, self.acceleration_sensor_datas, label='acceleration')
         plt.plot(self.time_datas, self.cm_acc_z_datas, label='cm_acceleration')
         plt.xlabel('Time')
         plt.ylabel('acceleration')
@@ -201,12 +203,28 @@ class HopperData:
         # plt.xlabel('Time')
         # plt.ylabel('ground_force')
         # plt.legend()
-        plt.subplot(row, column, 5)
-        plt.grid(True)
-        plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_angle')
-        plt.plot(self.time_datas, self.theta_datas, label='foot_angle')
-        plt.xlabel('Time')
-        plt.ylabel('theta')
+        # plt.subplot(row, column, 5)
+        # plt.grid(True)
+        # plt.plot(self.time_datas, self.hip_pos_sensor_datas, label='hip_angle')
+        # plt.plot(self.time_datas, self.theta_datas, label='foot_angle')
+        # plt.xlabel('Time')
+        # plt.ylabel('theta')
+        # plt.legend()
+        # plt.draw()
+        x = self.cm_pos_z_datas.copy()
+        y = self.cm_acc_z_datas.copy()
+        indices_to_exclude = []
+        for index, item in enumerate(y):
+            if item is None:
+                indices_to_exclude.append(index)
+        x = np.delete(x, indices_to_exclude)
+        y = np.delete(y, indices_to_exclude)
+
+        plt.subplot(row, column, 6)
+        plt.grid(True, linewidth=0.5)
+        plt.plot(x, y, label='acc')
+        plt.xlabel('cm_pos_z')
+        plt.ylabel('acc')
         plt.legend()
         plt.draw()
         
@@ -216,14 +234,23 @@ class HopperData:
         # plt.xlabel('Time')
         # plt.ylabel('angle')
         # plt.legend()
+        x = self.cm_pos_z_datas.copy()
+        y = self.cm_vel_z_datas.copy()
+        indices_to_exclude = []
+        for index, item in enumerate(y):
+            if item is None:
+                indices_to_exclude.append(index)
+        x = np.delete(x, indices_to_exclude)
+        y = np.delete(y, indices_to_exclude)
 
-        plt.subplot(row, column, 6)
+        plt.subplot(row, column, 5)
         plt.grid(True, linewidth=0.5)
-        plt.plot(self.time_datas, self.cm_pos_z_datas, label='cm_pos_z')
-        plt.xlabel('Time')
-        plt.ylabel('z')
+        plt.plot(x, y, label='velocity')
+        plt.xlabel('cm_pos_z')
+        plt.ylabel('velocity')
         plt.legend()
         plt.draw()
+        plt.tight_layout()
         
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -368,7 +395,7 @@ class Hopper1(MuJoCoBase):
         spring_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_TENDON, "tendon1")
         spring_length = self.data.ten_length[spring_siteid]
 
-        height = self.data.qpos[13] - self.height_original
+        height = self.data.qpos[13] - self.height_original  # 机构最低点距离地面的高度
         self.hopperdata.time_datas.append(self.data.time)
         self.hopperdata.kinetic_energy_datas.append(self.data.energy[1])
         self.hopperdata.potential_energy_datas.append(self.data.energy[0])
@@ -445,9 +472,7 @@ class Hopper1(MuJoCoBase):
         self.start_time = self.data.time
         if (self.is_render):
             while not glfw.window_should_close(self.window):
-                
                 self.bind_data()    # 收集数据
-                
                 current_simstart = self.data.time   # 当前一帧的开始时间
                 while (self.data.time - current_simstart < 1.0/self.Hz):
                     mj.mj_step(self.model, self.data)            
@@ -520,16 +545,21 @@ class Hopper1(MuJoCoBase):
         self.model.actuator_biasprm[actuator_no, 2] = -kv
 
 def main():
-    xml_path = "./xml/hopper1/scene2.xml"
+    # xml_path = "./xml/hopper1/scene.xml"
+    xml_path = "./xml/hopper1/hopper4.xml"
     sim = Hopper1(xml_path)
-    sim.simend = 1.5
-    sim.Hz = 20
+    sim.simend = 2
+    sim.Hz = 100
     sim.is_plot_data = False
-    sim.is_save_image = False
-    sim.is_render = False
+    sim.model.tendon_stiffness[0] = 50
+    sim.model.tendon_lengthspring[1] = [1, 1]
+    print(sim.model.tendon_lengthspring[1, 0])
+    # sim.is_save_image = False
+    # sim.is_save_data = False
+    # sim.is_render = False
     sim.reset()
     sim.simulate()
-    print(sim.model.tendon_stiffness)
+    # print(sim.model.tendon_stiffness)
     
     # sim.initial_state()
 
