@@ -6,6 +6,8 @@ from scipy.interpolate import griddata
 import mujoco as mj
 import multiprocessing
 
+# 竖直弹簧 改变原长
+
 xml_path = "./xml/hopper1/scene.xml"
 # 储存所有数据的列表，不同批次的实验使用不同的二维列表
 class AllData:
@@ -30,7 +32,7 @@ def task(queue, i):
     sim.is_render = False
     sim.is_plot_data = False
     sim.is_save_data = False
-    sim.is_save_image = False
+    # sim.is_save_image = False
     sim.simend = 2.0
     sim.Hz = 30
     sim.reset()
@@ -74,77 +76,78 @@ indices_to_exclude = []
 for index, item in enumerate(z):
     if item is None:
         indices_to_exclude.append(index)
-    x = np.delete(x, indices_to_exclude)
-    y = np.delete(y, indices_to_exclude)
-    z = np.delete(z, indices_to_exclude)
 
-    X, Y = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
-    Z = griddata((x, y), z, (X, Y), method='linear')
-    fig = plt.figure(figsize=(7, 10))
-    ax1 = fig.add_subplot(221, projection='3d')
-    ax1.plot_surface(X, Y, Z, cmap='viridis')
-    ax1.set_xlabel('tenser_length')
-    ax1.set_ylabel('height')
-    ax1.set_title('velocity')
-    # 加速度
-    y = [item for sublist in allData.all_cm_height_datas for item in sublist]
-    x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
-    z = [item for sublist in allData.all_cm_acceleration_datas for item in sublist]
+x = np.delete(x, indices_to_exclude)
+y = np.delete(y, indices_to_exclude)
+z = np.delete(z, indices_to_exclude)
 
-    indices_to_exclude = []
-    for index, item in enumerate(z):
-        if item is None:
-            indices_to_exclude.append(index)
-    x = np.delete(x, indices_to_exclude)
-    y = np.delete(y, indices_to_exclude)
-    z = np.delete(z, indices_to_exclude)
+X, Y = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
+Z = griddata((x, y), z, (X, Y), method='linear')
+fig = plt.figure(figsize=(7, 10))
+ax1 = fig.add_subplot(221, projection='3d')
+ax1.plot_surface(X, Y, Z, cmap='viridis')
+ax1.set_xlabel('tenser_length')
+ax1.set_ylabel('height')
+ax1.set_title('velocity')
+# 加速度
+y = [item for sublist in allData.all_cm_height_datas for item in sublist]
+x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
+z = [item for sublist in allData.all_cm_acceleration_datas for item in sublist]
 
-    X, Y = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
-    Z = griddata((x, y), z, (X, Y), method='linear')
-    ax1 = fig.add_subplot(222, projection='3d')
-    ax1.plot_surface(X, Y, Z, cmap='viridis')
-    ax1.set_xlabel('tenser_length')
-    ax1.set_ylabel('height')
-    ax1.set_title('acceleration')
-    # ax1.view_init(elev=30, azim=45)
+indices_to_exclude = []
+for index, item in enumerate(z):
+    if item is None:
+        indices_to_exclude.append(index)
+x = np.delete(x, indices_to_exclude)
+y = np.delete(y, indices_to_exclude)
+z = np.delete(z, indices_to_exclude)
 
-    # 动能
-    y = [item for sublist in allData.all_cm_height_datas for item in sublist]
-    x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
-    z = [item for sublist in allData.all_kinetic_energy_datas for item in sublist]
+X, Y = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
+Z = griddata((x, y), z, (X, Y), method='linear')
+ax1 = fig.add_subplot(222, projection='3d')
+ax1.plot_surface(X, Y, Z, cmap='viridis')
+ax1.set_xlabel('tenser_length')
+ax1.set_ylabel('height')
+ax1.set_title('acceleration')
+# ax1.view_init(elev=30, azim=45)
 
-    indices_to_exclude = []
-    for index, item in enumerate(z):
-        if item is None:
-            indices_to_exclude.append(index)
-    x = np.delete(x, indices_to_exclude)
-    y = np.delete(y, indices_to_exclude)
-    z = np.delete(z, indices_to_exclude)
+# 动能
+y = [item for sublist in allData.all_cm_height_datas for item in sublist]
+x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
+z = [item for sublist in allData.all_kinetic_energy_datas for item in sublist]
 
-    X_kinetic, Y_kinetic = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
-    Z_kinetic = griddata((x, y), z, (X, Y), method='linear')
+indices_to_exclude = []
+for index, item in enumerate(z):
+    if item is None:
+        indices_to_exclude.append(index)
+x = np.delete(x, indices_to_exclude)
+y = np.delete(y, indices_to_exclude)
+z = np.delete(z, indices_to_exclude)
 
-    # 势能
-    y = [item for sublist in allData.all_cm_height_datas for item in sublist]
-    x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
-    z = [item for sublist in allData.all_potential_energy_datas for item in sublist]
+X_kinetic, Y_kinetic = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
+Z_kinetic = griddata((x, y), z, (X, Y), method='linear')
 
-    indices_to_exclude = []
-    for index, item in enumerate(z):
-        if item is None:
-            indices_to_exclude.append(index)
-    x = np.delete(x, indices_to_exclude)
-    y = np.delete(y, indices_to_exclude)
-    z = np.delete(z, indices_to_exclude)
+# 势能
+y = [item for sublist in allData.all_cm_height_datas for item in sublist]
+x = [item for sublist in allData.all_tenser_length_datas for item in sublist]
+z = [item for sublist in allData.all_potential_energy_datas for item in sublist]
 
-    X_potential, Y_potential = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
-    Z_potential = griddata((x, y), z, (X, Y), method='cubic')
-    ax1 = fig.add_subplot(223, projection='3d')
-    ax1.plot_surface(X_kinetic, Y_kinetic, Z_kinetic, cmap='viridis', label='Kinetic Energy')
-    ax1.plot_surface(X_potential, Y_potential, Z_potential, cmap='autumn', label='Potential Energy')
-    plt.legend()
-    ax1.set_xlabel('tenser_length')
-    ax1.set_ylabel('height')
-    ax1.set_title('energy')
-    plt.tight_layout()
-    plt.show()
+indices_to_exclude = []
+for index, item in enumerate(z):
+    if item is None:
+        indices_to_exclude.append(index)
+x = np.delete(x, indices_to_exclude)
+y = np.delete(y, indices_to_exclude)
+z = np.delete(z, indices_to_exclude)
+
+X_potential, Y_potential = np.meshgrid(np.linspace(x.min(), x.max(), 100), np.linspace(y.min(), y.max(), 100))
+Z_potential = griddata((x, y), z, (X, Y), method='cubic')
+ax1 = fig.add_subplot(223, projection='3d')
+ax1.plot_surface(X_kinetic, Y_kinetic, Z_kinetic, cmap='viridis', label='Kinetic Energy')
+ax1.plot_surface(X_potential, Y_potential, Z_potential, cmap='autumn', label='Potential Energy')
+plt.legend()
+ax1.set_xlabel('tenser_length')
+ax1.set_ylabel('height')
+ax1.set_title('energy')
+plt.tight_layout()
+plt.show()

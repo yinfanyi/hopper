@@ -6,6 +6,7 @@ from scipy.interpolate import griddata
 import mujoco as mj
 import multiprocessing
 
+# 改变弹簧原长
 xml_path = "./xml/hopper1/scene.xml"
 # 储存所有数据的列表，不同批次的实验使用不同的二维列表
 class AllData:

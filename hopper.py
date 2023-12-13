@@ -8,15 +8,14 @@ import numpy as np
 from mujoco.glfw import glfw
 from numpy.linalg import inv
 from scipy.spatial.transform import Rotation as R
+from tqdm import tqdm
 
 from mujoco_base import MuJoCoBase
 
 # TODO:
-# 增加至两条弹簧的现象
-# 如何方便地进行控制
 # 持续优化，如何简化程序
-# 如何加进图条
-# pyside图形化界面
+# 图形化界面
+# gym代码研究
 
 FSM_AIR = 0
 FSM_STANCE = 1
@@ -93,7 +92,7 @@ class HopperData:
     def plot_data(self):
         row = 6
         column = 1
-        plt.figure(1)
+        plt.figure()
         plt.clf()
         plt.grid(True, linewidth=0.5)
         
@@ -159,7 +158,7 @@ class HopperData:
     def save_image(self, save_dir:str = "./temp/image/"):
         row = 6
         column = 1
-        plt.figure(2, figsize=(5, 11))
+        plt.figure(figsize=(5, 11))
         plt.clf()
         # plt.figure(2)
         plt.subplot(row, column, 1)
@@ -267,6 +266,7 @@ class Hopper1(MuJoCoBase):
         self.is_save_data = True
         self.is_render = True
         self.fsm = None
+        self.is_tqdm = True
         # self.step_no = 0
         # 储存用于画图和分析的数据
         self.hopperdata = HopperData()
@@ -470,15 +470,17 @@ class Hopper1(MuJoCoBase):
 
     def simulate(self):
         self.start_time = self.data.time
+        if self.is_tqdm:
+            total_steps = 100  # 总的步骤数
+            progress_bar = tqdm(total=total_steps, leave=False)  # 创建进度条对象
+            time_interval = self.simend / total_steps  # 计算时间间隔
+            current_progress = 0  # 当前进度
         if (self.is_render):
-            while not glfw.window_should_close(self.window):
+            while not glfw.window_should_close(self.window) and self.data.time < self.simend:
                 self.bind_data()    # 收集数据
                 current_simstart = self.data.time   # 当前一帧的开始时间
                 while (self.data.time - current_simstart < 1.0/self.Hz):
-                    mj.mj_step(self.model, self.data)            
-                if self.data.time >= self.simend:
-                    break
-                
+                    mj.mj_step(self.model, self.data)                      
                 # get framebuffer viewport
                 viewport_width, viewport_height = glfw.get_framebuffer_size(
                     self.window)
@@ -494,19 +496,23 @@ class Hopper1(MuJoCoBase):
                 # process pending GUI events, call GLFW callbacks
                 glfw.poll_events()
                 if self.is_plot_data and self.data.time> 0.95:
-                    self.hopperdata.plot_data()         
+                    self.hopperdata.plot_data()
+                if self.is_tqdm:     
+                    current_progress = int(self.data.time / time_interval)  # 计算当前进度
+                    progress_bar.update(current_progress - progress_bar.n)  # 更新进度条
             glfw.terminate()
         else:
-            while True:
+            while self.data.time < self.simend:
                 self.bind_data()    # 收集数据
                 current_simstart = self.data.time   # 当前一帧的开始时间
                 while (self.data.time - current_simstart < 1.0/self.Hz):
                     mj.mj_step(self.model, self.data)
                 # print(self.data.energy[1])   
-                if self.data.time >= self.simend:
-                    break
                 if self.is_plot_data:
                     self.hopperdata.plot_data()
+                if self.is_tqdm:
+                    current_progress = int(self.data.time / time_interval)  # 计算当前进度
+                    progress_bar.update(current_progress - progress_bar.n)  # 更新进度条
             if self.is_save_image:
                 self.hopperdata.save_image()
             if self.is_save_data:
@@ -514,7 +520,7 @@ class Hopper1(MuJoCoBase):
                 model_text_dir = "./temp/model.txt"
                 data_text_dir = "./temp/data.txt"
                 mj.mj_printModel(self.model, model_text_dir)
-                mj.mj_printData(self.model, self.data, data_text_dir)  
+                mj.mj_printData(self.model, self.data, data_text_dir)
     
     def initial_state(self):
         # self.model.body_pos[1,2] = 3.5
@@ -546,17 +552,21 @@ class Hopper1(MuJoCoBase):
 
 def main():
     # xml_path = "./xml/hopper1/scene.xml"
-    xml_path = "./xml/hopper1/hopper4.xml"
+    xml_path = "./xml/hopper1/hopper5.xml"
     sim = Hopper1(xml_path)
-    sim.simend = 2
+    sim.simend = 3
     sim.Hz = 100
     sim.is_plot_data = False
-    sim.model.tendon_stiffness[0] = 50
-    sim.model.tendon_lengthspring[1] = [1, 1]
+    # sim.model.tendon_stiffness[0] = 50
+    # sim.model.tendon_lengthspring[1] = [1, 1]
+    tmp = 2
+    sim.model.tendon_lengthspring[1] = [tmp, tmp]
+    sim.model.tendon_lengthspring[2] = [tmp, tmp]
     print(sim.model.tendon_lengthspring[1, 0])
     # sim.is_save_image = False
     # sim.is_save_data = False
-    # sim.is_render = False
+    sim.is_render = False
+    sim.is_tqdm = False
     sim.reset()
     sim.simulate()
     # print(sim.model.tendon_stiffness)

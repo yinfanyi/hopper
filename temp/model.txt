@@ -9,19 +9,19 @@ nbvh                  7
 nbvhstatic            7
 njnt                  6
 ngeom                 7
-nsite                 4
+nsite                 8
 nlight                2
 ntex                  2
 ntexdata              4988592
 nmat                  1
 nexclude              10
 neq                   2
-ntendon               2
-nwrap                 4
+ntendon               3
+nwrap                 6
 nsensor               5
-nnames                389
+nnames                437
 npaths                1
-nnames_map            104
+nnames_map            114
 nM                    72
 nD                    128
 nB                    64
@@ -31,9 +31,9 @@ nconmax               -1
 ntree                 2
 nsensordata           11
 narena                14680064
-nbuffer               5008897
+nbuffer               5009281
 
-timestep              1e-05   
+timestep              0.0001  
 apirate               1e+02   
 impratio              1       
 tolerance             1e-08   
@@ -883,6 +883,30 @@ SITE 0:
   site_rgba             0.5       0.5       0.5       1        
 
 SITE 1:
+  name                  top_left
+  site_type             2 
+  site_bodyid           1 
+  site_matid            -1 
+  site_group            0 
+  site_sameframe        0 
+  site_size             0.02      0.005     0.005    
+  site_pos             -0.5       0         0        
+  site_quat             1         0         0         0        
+  site_rgba             0.5       0.5       0.5       1        
+
+SITE 2:
+  name                  top_right
+  site_type             2 
+  site_bodyid           1 
+  site_matid            -1 
+  site_group            0 
+  site_sameframe        0 
+  site_size             0.02      0.005     0.005    
+  site_pos              0.5       0         0        
+  site_quat             1         0         0         0        
+  site_rgba             0.5       0.5       0.5       1        
+
+SITE 3:
   name                  s_left
   site_type             2 
   site_bodyid           2 
@@ -894,7 +918,7 @@ SITE 1:
   site_quat             1         0         0         0        
   site_rgba             0.5       0.5       0.5       1        
 
-SITE 2:
+SITE 4:
   name                  s_right
   site_type             2 
   site_bodyid           4 
@@ -906,7 +930,7 @@ SITE 2:
   site_quat             1         0         0         0        
   site_rgba             0.5       0.5       0.5       1        
 
-SITE 3:
+SITE 5:
   name                  foot_ground
   site_type             2 
   site_bodyid           6 
@@ -915,6 +939,30 @@ SITE 3:
   site_sameframe        1 
   site_size             0.005     0.005     0.005    
   site_pos              0         0         0        
+  site_quat             1         0         0         0        
+  site_rgba             0.5       0.5       0.5       1        
+
+SITE 6:
+  name                  foot_left
+  site_type             2 
+  site_bodyid           6 
+  site_matid            -1 
+  site_group            0 
+  site_sameframe        0 
+  site_size             0.005     0.005     0.005    
+  site_pos             -0.5       0         0        
+  site_quat             1         0         0         0        
+  site_rgba             0.5       0.5       0.5       1        
+
+SITE 7:
+  name                  foot_right
+  site_type             2 
+  site_bodyid           6 
+  site_matid            -1 
+  site_group            0 
+  site_sameframe        0 
+  site_size             0.005     0.005     0.005    
+  site_pos              0.5       0         0        
   site_quat             1         0         0         0        
   site_rgba             0.5       0.5       0.5       1        
 
@@ -1072,8 +1120,8 @@ TENDON 0:
   tendon_rgba           0.95      0.3       0.3       1        
   path
     type  objid  prm
-    3     1      0       
-    3     2      0       
+    3     3      0       
+    3     4      0       
 
 
 TENDON 1:
@@ -1093,14 +1141,41 @@ TENDON 1:
   tendon_stiffness      50       
   tendon_damping        0        
   tendon_frictionloss   0        
-  tendon_lengthspring   1         1        
-  tendon_length0        0.42     
-  tendon_invweight0     2.8      
+  tendon_lengthspring   2         2        
+  tendon_length0        1.1      
+  tendon_invweight0     4.1      
   tendon_rgba           0.95      0.6       0.6       1        
   path
     type  objid  prm
-    3     0      0       
-    3     3      0       
+    3     1      0       
+    3     7      0       
+
+
+TENDON 2:
+  name                  tendon3
+  tendon_adr            4 
+  tendon_num            2 
+  tendon_matid          -1 
+  tendon_group          0 
+  tendon_limited        1 
+  tendon_width          0.02     
+  tendon_solref_lim     0.02      1        
+  tendon_solimp_lim     0.9       0.95      0.001     0.5       2        
+  tendon_solref_fri     0.02      1        
+  tendon_solimp_fri     0.9       0.95      0.001     0.5       2        
+  tendon_range          0.1       10       
+  tendon_margin         0        
+  tendon_stiffness      50       
+  tendon_damping        0        
+  tendon_frictionloss   0        
+  tendon_lengthspring   2         2        
+  tendon_length0        1.1      
+  tendon_invweight0     4.1      
+  tendon_rgba           0.95      0.6       0.6       1        
+  path
+    type  objid  prm
+    3     2      0       
+    3     6      0       
 
 
 
@@ -1279,7 +1354,7 @@ SENSOR 4:
   sensor_datatype       0 
   sensor_needstage      3 
   sensor_objtype        6 
-  sensor_objid          3 
+  sensor_objid          5 
   sensor_reftype        0 
   sensor_refid          -1 
   sensor_dim            3 
