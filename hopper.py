@@ -16,12 +16,12 @@ from mujoco_base import MuJoCoBase
 # 持续优化，如何简化程序
 # 图形化界面
 # gym代码研究
+# 多参数综合研究
 
 FSM_AIR = 0
 FSM_STANCE = 1
 FSM_TAKEOFF = 2
 
-    
 class HopperData:
     def __init__(self):
         self.time_datas = []
@@ -266,7 +266,7 @@ class Hopper1(MuJoCoBase):
         self.is_save_data = True
         self.is_render = True
         self.fsm = None
-        self.is_tqdm = True
+        self.is_tqdm = False
         # self.step_no = 0
         # 储存用于画图和分析的数据
         self.hopperdata = HopperData()
@@ -467,7 +467,6 @@ class Hopper1(MuJoCoBase):
         self.hopperdata.ground_force_y_sensor_datas.append(result[1,0])
         self.hopperdata.ground_force_z_sensor_datas.append(result[2,0])
 
-
     def simulate(self):
         self.start_time = self.data.time
         if self.is_tqdm:
@@ -501,6 +500,7 @@ class Hopper1(MuJoCoBase):
                     current_progress = int(self.data.time / time_interval)  # 计算当前进度
                     progress_bar.update(current_progress - progress_bar.n)  # 更新进度条
             glfw.terminate()
+            return True
         else:
             while self.data.time < self.simend:
                 self.bind_data()    # 收集数据
@@ -521,6 +521,7 @@ class Hopper1(MuJoCoBase):
                 data_text_dir = "./temp/data.txt"
                 mj.mj_printModel(self.model, model_text_dir)
                 mj.mj_printData(self.model, self.data, data_text_dir)
+            return True
     
     def initial_state(self):
         # self.model.body_pos[1,2] = 3.5
@@ -565,8 +566,8 @@ def main():
     print(sim.model.tendon_lengthspring[1, 0])
     # sim.is_save_image = False
     # sim.is_save_data = False
-    sim.is_render = False
-    sim.is_tqdm = False
+    # sim.is_render = False
+    # sim.is_tqdm = True
     sim.reset()
     sim.simulate()
     # print(sim.model.tendon_stiffness)
