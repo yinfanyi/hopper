@@ -12,12 +12,6 @@ from tqdm import tqdm
 
 from mujoco_base import MuJoCoBase
 
-# TODO:
-# 持续优化，如何简化程序
-# 图形化界面
-# gym代码研究
-# 多参数综合研究
-
 FSM_AIR = 0
 FSM_STANCE = 1
 FSM_TAKEOFF = 2
@@ -352,38 +346,28 @@ class Hopper1(MuJoCoBase):
         # height = self.data.qpos[8] - self.model.qpos0[8]
         spring_siteid:int = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_TENDON, "tendon1")
         spring_length = self.data.ten_length[spring_siteid]
-        pservo_hip_left_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "pservo_hip_left")
-        pservo_hip_right_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "pservo_hip_right")
-        vservo_hip_left_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "vservo_hip_left")
-        vservo_hip_right_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "vservo_hip_right")
-        
+        left_hip_roll_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "left_hip_roll")
+        right_hip_roll_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_ACTUATOR, "right_hip_roll")
         mj.mj_energyPos(model, data)
         mj.mj_energyVel(model, data)
-        
-        # Take off
+        return
         during_time = self.data.time - self.start_time
-        # print(during_time)
-        # print(spring_length)
-        # if self.fsm == FSM_TAKEOFF and spring_length > 1.64 and during_time > 1:
-        if self.fsm == FSM_TAKEOFF and during_time > 1:
-            self.fsm = FSM_AIR
 
-        if self.fsm == FSM_AIR:
-            self.set_position_servo(pservo_hip_left_id, 0)
-            self.set_velocity_servo(vservo_hip_left_id,0)
-            self.set_position_servo(pservo_hip_right_id, 0)
-            self.set_velocity_servo(vservo_hip_right_id,0)
-            self.data.ctrl[pservo_hip_left_id] = 0
-            self.data.ctrl[pservo_hip_right_id] = 0
+        if during_time < 1 :
+            print('0')
+            self.data.ctrl[left_hip_roll_id] = 0
+            self.data.ctrl[right_hip_roll_id] = 0
+        if during_time < 2 and during_time >= 1:
+            print('1')
+            tmp = during_time*2-2
+            self.data.ctrl[left_hip_roll_id] = -tmp
+            self.data.ctrl[right_hip_roll_id] = tmp
 
-        if self.fsm == FSM_TAKEOFF:
-            # 为什么会出现无穷，注释掉就不会出现
-            self.data.ctrl[pservo_hip_left_id] = -0.5
-            self.data.ctrl[pservo_hip_right_id] = 0.5
-            self.set_position_servo(pservo_hip_left_id, 3000)
-            self.set_velocity_servo(vservo_hip_left_id,100)
-            self.set_position_servo(pservo_hip_right_id, 3000)
-            self.set_velocity_servo(vservo_hip_right_id,100)
+        if during_time > 2:
+            print('2')
+            self.data.ctrl[left_hip_roll_id] = 0
+            self.data.ctrl[right_hip_roll_id] = 0
+            
             
     def bind_data(self):
         """
@@ -558,8 +542,8 @@ def main():
     # xml_path = "./xml/hopper1/hopper_longSideBar_small.xml"
     xml_path = "./xml/hopper1/hopper_longSideBar.xml"
     sim = Hopper1(xml_path)
-    sim.simend = 3
-    sim.Hz = 100
+    sim.simend = 5
+    sim.Hz = 50
     sim.is_plot_data = False
     # sim.model.tendon_stiffness[0] = 50
     # sim.model.tendon_lengthspring[1] = [1, 1]

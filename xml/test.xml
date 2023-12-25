@@ -1,45 +1,26 @@
 <mujoco>
-  <option timestep="0.001" integrator="RK4" gravity="0 0 -9.81">
-    <flag sensornoise="enable" contact="enable" energy="enable" />
-  </option>
+  <compiler autolimits="true"/>
 
-  <statistic center="0 0 0.55" extent="1.1" />
+  <option integrator="implicitfast"/>
 
-  <visual>
-    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
-    <rgba haze="0.15 0.25 0.35 1" />
-    <global azimuth="150" elevation="-20" />
-  </visual>
-
-  <asset>
-    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512"
-      height="3072" />
-    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4"
-      rgb2="0.1 0.2 0.3"
-      markrgb="0.8 0.8 0.8" width="300" height="300" />
-    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5"
-      reflectance="0.2" />
-  </asset>
-  <extension>
-    <plugin plugin="mujoco.elasticity.solid" />
-  </extension>
   <worldbody>
-    <!-- <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/> -->
-    <!-- <light mode="targetbody" target="torso"/> -->
-    <!-- <light name="spotlight" mode="targetbodycom" target="leg" pos="0 -1 2"/> -->
-    <light pos="0 0 3" dir="0 0 -1" directional="false" />
-    <geom name="floor" size="0 0 .125" type="plane" material="groundplane" conaffinity="15"
-      condim="3" />
-    <flexcomp type="grid" count="24 4 4" spacing=".1 .1 .1" pos=".1 0 1.5"
-      radius=".0" rgba="0 .7 .7 1" name="softbody" dim="3" mass="7">
-      <contact condim="3" solref="0.01 1" solimp=".95 .99 .0001" selfcollide="none" />
-      <edge damping="1" />
-      <plugin plugin="mujoco.elasticity.solid">
-        <config key="poisson" value="0.2" />
-        <!--Units
-        are in Pa (SI)-->
-        <config key="young" value="5e4" />
-      </plugin>
-    </flexcomp>
+    <geom type="plane" size="1 1 .01"/>
+    <light pos="0 0 2"/>
+    <body pos="0 0 .3">
+      <joint name="hinge" damping=".01" actuatorfrcrange="-.4 .4"/>
+      <geom type="capsule" size=".01" fromto="0 0 0 .2 0 0"/>
+      <geom size=".03" pos=".2 0 0"/>
+    </body>
   </worldbody>
+
+  <actuator>
+    <motor name="motor" joint="hinge" ctrlrange="-1 1"/>
+    <damper name="damper" joint="hinge" kv="10" ctrlrange="0 1"/>
+  </actuator>
+
+  <sensor>
+    <actuatorfrc name="motor" actuator="motor"/>
+    <actuatorfrc name="damper" actuator="damper"/>
+    <jointactuatorfrc name="hinge" joint="hinge"/>
+  </sensor>
 </mujoco>

@@ -76,3 +76,129 @@ ERROR: Python exception raised
 Thu Dec  7 23:33:12 2023
 ERROR: Python exception raised
 
+Sun Dec 24 20:52:11 2023
+WARNING: Nan, Inf or huge value in QVEL at DOF 0. The simulation is unstable. Time = 0.0001.
+
+Sun Dec 24 20:53:27 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:08:54 2023
+WARNING: Nan, Inf or huge value in QVEL at DOF 2. The simulation is unstable. Time = 0.0001.
+
+Sun Dec 24 22:12:32 2023
+WARNING: Nan, Inf or huge value in QVEL at DOF 2. The simulation is unstable. Time = 0.0001.
+
+Sun Dec 24 22:12:37 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:14:02 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0001.
+
+Sun Dec 24 22:15:16 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0002.
+
+Sun Dec 24 22:15:44 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0002.
+
+Sun Dec 24 22:19:35 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:35:07 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0002.
+
+Sun Dec 24 22:35:16 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:42:11 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Sun Dec 24 22:42:18 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:42:50 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Sun Dec 24 22:42:53 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:52:12 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Sun Dec 24 22:52:16 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:54:09 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Sun Dec 24 22:54:13 2023
+ERROR: Python exception raised
+
+Sun Dec 24 22:57:26 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Sun Dec 24 23:01:20 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 8. The simulation is unstable. Time = 0.0029.
+
+Sun Dec 24 23:01:25 2023
+ERROR: Python exception raised
+
+Sun Dec 24 23:03:19 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 13. The simulation is unstable. Time = 0.0052.
+
+Mon Dec 25 09:10:42 2023
+WARNING: Nan, Inf or huge value in QVEL at DOF 0. The simulation is unstable. Time = 0.0005.
+
+Mon Dec 25 09:10:47 2023
+ERROR: Python exception raised
+
+Mon Dec 25 09:11:05 2023
+WARNING: Nan, Inf or huge value in QVEL at DOF 0. The simulation is unstable. Time = 0.0005.
+
+Mon Dec 25 09:11:08 2023
+ERROR: Python exception raised
+
+Mon Dec 25 09:56:11 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Mon Dec 25 09:56:15 2023
+ERROR: Python exception raised
+
+Mon Dec 25 09:58:39 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 0.0004.
+
+Mon Dec 25 09:58:41 2023
+ERROR: Python exception raised
+
+Mon Dec 25 10:10:15 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0035.
+
+Mon Dec 25 10:10:23 2023
+ERROR: Python exception raised
+
+Mon Dec 25 10:11:11 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0035.
+
+Mon Dec 25 10:11:15 2023
+ERROR: Python exception raised
+
+Mon Dec 25 10:13:25 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 8. The simulation is unstable. Time = 0.0053.
+
+Mon Dec 25 10:14:20 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0035.
+
+Mon Dec 25 10:14:24 2023
+ERROR: Python exception raised
+
+Mon Dec 25 10:49:11 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.0002.
+
+Mon Dec 25 10:49:15 2023
+ERROR: Python exception raised
+
+Mon Dec 25 10:49:27 2023
+WARNING: Nan, Inf or huge value in QACC at DOF 14. The simulation is unstable. Time = 0.0065.
+
+Mon Dec 25 10:49:29 2023
+ERROR: Python exception raised
+

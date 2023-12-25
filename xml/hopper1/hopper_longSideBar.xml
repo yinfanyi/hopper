@@ -1,10 +1,8 @@
 <mujoco>
-	<!-- 增加一根竖直布置的弹簧 -->
+	<!-- 侧杆较长 -->
 	<option timestep="0.0001" integrator="RK4" gravity="0 0 -10">
 		<flag sensornoise="enable" contact="enable" energy="enable" />
 	</option>
-
-	<statistic center="0 0 0.55" extent="1.1" />
 
 	<visual>
 		<headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0" />
@@ -32,33 +30,36 @@
 		<geom name="floor" size="0 0 .125" type="plane" material="groundplane" conaffinity="15"
 			condim="3" />
 		<body name="hopper" pos="0 0 2">
-			<freejoint />
-			<geom type="box" size=".7 .2 .04" rgba=".9 .9 .9 1" mass="0.5" />
+			<freejoint/> 
+			<!-- <joint name="x" type="slide" pos="0 0 0" axis="1 0 0" /> -->
+			<!-- <joint name="z" type="slide" pos="0 0 0" axis="0 0 1" /> -->
+			<geom type="box" size=".5 .2 .09" rgba=".9 .9 .9 1" mass="0.333" />
 			<site name="imu" size="0.01" pos="0 0 0" />
-			<body name="thigh_left" pos="-0.6179 0 -0.1179" euler="0 45 0">
-				<joint name="hip_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-45 130"
-					limited="auto" />
-				<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
-				<site name="s_left" pos="0 0 -0.15" />
-				<body name="leg_left" pos="0.1667 0 -0.1179" euler="0 -90 0">
-					<joint name="knee_left" type="hinge" pos="0 0 0.1667" axis="0 -1 0" />
-					<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
+
+			<body name="thigh_left" pos="-0.5202 0 -0.3536" euler="0 45 0">
+				<joint name="hip_left" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-45 90"
+					limited="true" />
+				<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1" />
+				<site name="s_left" pos="0 0 -0.5" />
+				<body name="leg_left" pos="0.5 0 -0.5" euler="0 -90 0">
+					<joint name="knee_left" type="hinge" pos="0 0 0.5" axis="0 -1 0" />
+					<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1" />
 				</body>
 			</body>
-			<body name="thigh_right" pos="0.6179 0 -0.1179" euler="0 -45 0">
-				<joint name="hip_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0" range="-130 45"
-					limited="auto" />
-				<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
-				<site name="s_right" pos="0 0 -0.15" />
-				<body name="leg_right" pos="-0.1667 0 -0.1179" euler="0 90 0">
-					<joint name="knee_right" type="hinge" pos="0 0 0.1667" axis="0 -1 0" />
-					<geom type="cylinder" size=".05 .15" rgba="0 .9 0 1" mass="0.5" />
+			<body name="thigh_right" pos="0.5202 0 -0.3536" euler="0 -45 0">
+				<joint name="hip_right" type="hinge" pos="0 0 0.5" axis="0 -1 0" range="-90 45"
+					limited="true" />
+				<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1" />
+				<site name="s_right" pos="0 0 -0.5" />
+				<body name="leg_right" pos="-0.5 0 -0.5" euler="0 90 0">
+					<joint name="knee_right" type="hinge" pos="0 0 0.5" axis="0 -1 0" />
+					<geom type="cylinder" size=".05 .5" rgba="0 .9 0 1" mass="1" />
 				</body>
 			</body>
 		</body>
-		<body name="foot" pos="0 0 1.5757">
+		<body name="foot" pos="0 0 0.5858">
 			<freejoint />
-			<geom type="box" size=".6 .2 .05" rgba=".9 .9 .0 1" mass="0.5" />
+			<geom type="box" size=".2 .2 .1" rgba=".9 .9 .0 1" mass="0.333" />
 			<site name="foot_ground" pos="0 0 0" />
 		</body>
 	</worldbody>
@@ -70,32 +71,26 @@
 		<exclude name="e3" body1="thigh_right" body2="leg_right" />
 		<exclude name="e4" body1="leg_left" body2="foot" />
 		<exclude name="e5" body1="leg_right" body2="foot" />
-		<exclude name="e6" body1="hopper" body2="leg_right" />
-		<exclude name="e7" body1="hopper" body2="leg_left" />
-		<exclude name="e8" body1="thigh_left" body2="foot" />
-		<exclude name="e9" body1="thigh_right" body2="foot" />
 	</contact>
 
 	<equality>
-		<connect name="c1" body1="leg_left" body2="foot" anchor="0 0 -0.1667" />
-		<connect name="c2" body1="leg_right" body2="foot" anchor="0 0 -0.1667" />
+		<connect name="c1" body1="leg_left" body2="foot" anchor="0 0 -0.5" />
+		<connect name="c2" body1="leg_right" body2="foot" anchor="0 0 -0.5" />
 	</equality>
 
 	<tendon>
-		<spatial name='tendon1' range="0.1 10" limited="true" width=".02" rgba=".95 .3 .3 1"
-			stiffness="50" springlength="0.5">
+		<spatial name='tendon1' range="0.01 10" limited="true" width=".02" rgba=".95 .3 .3 1"
+			stiffness="100" damping=".1" springlength="1">
 			<site site="s_left" />
 			<site site="s_right" />
 		</spatial>
-		<spatial name='tendon2' range="0.1 10" limited="true" width=".02" rgba=".95 .6 .6 1"
-			stiffness="50" springlength="0.2">
-			<site site="imu" />
-			<site site="foot_ground" />
-		</spatial>
-
 	</tendon>
 
 	<actuator>
+		<!-- <motor name="left_hip_roll" joint="hip_left" gear="5" ctrlrange="-10 10"
+			ctrllimited="true"/>
+		<motor name="right_hip_roll" joint="hip_right" gear="5" ctrlrange="-10 10"
+			ctrllimited="true"/> -->
 		<position name="pservo_hip_left" joint="hip_left" kp="0" />
 		<velocity name="vservo_hip_left" joint="hip_left" kv="0" />
 		<position name="pservo_hip_right" joint="hip_right" kp="0" />
