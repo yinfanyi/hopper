@@ -1,26 +1,10 @@
 <mujoco>
-  <compiler autolimits="true"/>
-
-  <option integrator="implicitfast"/>
-
   <worldbody>
-    <geom type="plane" size="1 1 .01"/>
-    <light pos="0 0 2"/>
-    <body pos="0 0 .3">
-      <joint name="hinge" damping=".01" actuatorfrcrange="-.4 .4"/>
-      <geom type="capsule" size=".01" fromto="0 0 0 .2 0 0"/>
-      <geom size=".03" pos=".2 0 0"/>
+        <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1" />
+    <geom type="plane" size="10 1 0.1" rgba=".9 0 0 1" />
+    <body pos="0 0 1">
+      <joint type="free" name="hhh" />
+      <geom type="sphere" size=".2" rgba="0 .9 0 1" />
     </body>
-  </worldbody>
-
-  <actuator>
-    <motor name="motor" joint="hinge" ctrlrange="-1 1"/>
-    <damper name="damper" joint="hinge" kv="10" ctrlrange="0 1"/>
-  </actuator>
-
-  <sensor>
-    <actuatorfrc name="motor" actuator="motor"/>
-    <actuatorfrc name="damper" actuator="damper"/>
-    <jointactuatorfrc name="hinge" joint="hinge"/>
-  </sensor>
+  <body pos="0 0 1" name="333"><joint type="free" name="111" /><geom type="sphere" size=".2" rgba="0 .9 0 1" /></body></worldbody>
 </mujoco>

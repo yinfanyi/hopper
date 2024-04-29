@@ -553,10 +553,10 @@ class Hopper1(MuJoCoBase):
         self.model.actuator_biasprm[actuator_no, 2] = -kv
 
 def main():
-    # xml_path = "./xml/hopper1/scene.xml"
+    xml_path = "./xml/hopper1/scene.xml"
     # xml_path = "./xml/hopper1/hopper4.xml"
     # xml_path = "./xml/hopper1/hopper_longSideBar_small.xml"
-    xml_path = "./xml/hopper1/hopper_longSideBar.xml"
+    # xml_path = "./xml/hopper1/hopper_longSideBar.xml"
     sim = Hopper1(xml_path)
     sim.simend = 3
     sim.Hz = 100

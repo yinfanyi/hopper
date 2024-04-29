@@ -1,7 +1,7 @@
 <mujoco>
 	<!-- 根据dsh提供的参数建模 -->
 	<option timestep="0.00001" integrator="RK4" gravity="0 0 -10">
-		<flag sensornoise="enable" contact="enable" energy="enable" />
+		<flag contact="enable" energy="enable" />
 	</option>
 
 	<statistic center="0 0 0.55" extent="1.1" />
