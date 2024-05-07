@@ -45,23 +45,23 @@ class Tensegrity:
                 elem.tail = indent
 
     # 生成杆和杆的各类属性，记录在self.rod_element列表里
-    def generate_rod_element(self, rod_name:str, pos:str, **kwargs):
-        match = re.search(r"rod(\d+)_(\d+)", rod_name)
+    def generate_rod_element(self, body_name:str, body_pos:str, **kwargs):
+        match = re.search(r"rod(\d+)_(\d+)", body_name)
         assert match, "rod_name必须符合rodx_y的格式"
         # 检查 rod_name 对应的 rod 是否已经存在
         for rod in self.rod_list:
-            if rod['name'] == rod_name:
-                print(f"Rod with name '{rod_name}' already exists in rod_list.")
+            if rod['body_name'] == body_name:
+                print(f"Rod with name '{body_name}' already exists in rod_list.")
                 return
-        rod_dict = {'name':rod_name, 'pos':pos}
+        rod_dict = {'body_name':body_name, 'body_pos':body_pos}
         rod_dict.update(kwargs)
         self.rod_list.append(rod_dict)
 
     # 生成绳索的各类属性，记录在self.string_list列表里
-    def generate_string_element(self, from_site_name:str, to_site_name:str, **kwargs):
-        match1 = re.search(r"s(\d+)", from_site_name)
+    def generate_string_element(self, fromsite_name:str, tosite_name:str, **kwargs):
+        match1 = re.search(r"s(\d+)", fromsite_name)
         assert match1, "from_site_name必须符合sx的格式"
-        match2 = re.search(r"s(\d+)", to_site_name)
+        match2 = re.search(r"s(\d+)", tosite_name)
         assert match2, "to_site_name必须符合sx的格式"
 
         x_str = match1.group(1)
@@ -75,7 +75,7 @@ class Tensegrity:
             if string['name'] == string_name:
                 print(f"String with name '{string_name}' already exists in string_list.")
                 return
-        string_dict = {'name':string_name, 'from_site_name':from_site_name, 'to_site_name':to_site_name}
+        string_dict = {'name':string_name, 'fromsite_name':fromsite_name, 'tosite_name':tosite_name}
         string_dict.update(kwargs)
         self.string_list.append(string_dict)
 
@@ -131,8 +131,8 @@ class Tensegrity:
         
         S = np.dot(self.N, self.C_s.T)
         for j in range(S.shape[1]):
-            self.generate_string_element(from_site_name=f's{np.argmax(self.C_s[j, :] == -1)}', 
-                                        to_site_name=f's{np.argmax(self.C_s[j, :] == 1)}')
+            self.generate_string_element(fromsite_name=f's{np.argmax(self.C_s[j, :] == -1)}', 
+                                        tosite_name=f's{np.argmax(self.C_s[j, :] == 1)}')
         
     # 将rod_list内容加载到xmltree里，注意，tree在类里，还需要tree.write将内容加载到xml文件
     def load_rod_list2xmltree(self):
@@ -154,28 +154,46 @@ class Tensegrity:
     # 将在rod_list中的其中一项rod_element:Dict写进xml
     def load_rod_element2xmltree(self, rod_element:Dict):
         new_body = ET.Element('body')
-        new_body.set('name', rod_element.get('name'))
-        new_body.set('pos', rod_element.get('pos'))
+        new_body.set('name', rod_element.get('body_name'))
+        new_body.set('pos', rod_element.get('body_pos'))
 
         joint = ET.Element('joint')
         for key, value in rod_element.items():
             if key.startswith('joint_'):
+                print(key.split('_')[-1])
+                print(value)
                 joint.set(key.split('_')[-1], value)
-
+        
         geom = ET.Element('geom')
-        geom.set('name', rod_element.get('geom_name'))
-        geom.set('type', rod_element.get('geom_type'))
-        geom.set('fromto', rod_element.get('geom_fromto'))
-        geom.set('density', rod_element.get('geom_density'))
-        geom.set('size', rod_element.get('geom_size'))
+        for key, value in rod_element.items():
+            if key.startswith('geom_'):
+                geom.set(key.split('_')[-1], value)
 
         site1 = ET.Element('site')
-        site1.set('name', rod_element.get('site1_name'))
-        site1.set('pos', rod_element.get('site1_pos'))
+        for key, value in rod_element.items():
+            if key.startswith('site1_'):
+                site1.set(key.split('_')[-1], value)
 
         site2 = ET.Element('site')
-        site2.set('name', rod_element.get('site2_name'))
-        site2.set('pos', rod_element.get('site2_pos'))
+        for key, value in rod_element.items():
+            if key.startswith('site2_'):
+                site2.set(key.split('_')[-1], value)
+
+
+        # geom = ET.Element('geom')
+        # geom.set('name', rod_element.get('geom_name'))
+        # geom.set('type', rod_element.get('geom_type'))
+        # geom.set('fromto', rod_element.get('geom_fromto'))
+        # geom.set('density', rod_element.get('geom_density'))
+        # geom.set('size', rod_element.get('geom_size'))
+
+        # site1 = ET.Element('site')
+        # site1.set('name', rod_element.get('site1_name'))
+        # site1.set('pos', rod_element.get('site1_pos'))
+
+        # site2 = ET.Element('site')
+        # site2.set('name', rod_element.get('site2_name'))
+        # site2.set('pos', rod_element.get('site2_pos'))
 
         new_body.append(joint)
         new_body.append(geom)
@@ -191,6 +209,9 @@ class Tensegrity:
         new_spatial.set('name', string_element.get('name'))
 
         site1 = ET.Element('site')
+        for key, value in string_element.items():
+            if key.startswith('fromsite_'):
+                site1.set(key.split('_')[-1], value)
         site1.set('site', string_element.get('from_site_name'))
 
         site2 = ET.Element('site')
@@ -202,7 +223,7 @@ class Tensegrity:
         tendon = self.root.find('tendon')
         tendon.append(new_spatial)
 
-    # 指定杆名字和两端坐标，在文件中生成杆件
+    # 指定杆名字和两端坐标，在文件中生得分load_string_element2xmltree(self,string_element:Dict):成杆件
     def generate_rod_element2xml(self, rod_name:str, fromto_coords, mass:Optional[str]=None, rod_radius='0.014'):
         assert len(fromto_coords) == 6 and all(isinstance(coord, (int, float)) for coord in fromto_coords), "fromto_coords必须是包含六个数字的列表"
         match = re.search(r"rod(\d+)_(\d+)", rod_name)
@@ -560,9 +581,10 @@ def main3():
     super_ball.move_nodes(0, 0, 1) # 使之整体向上移动1m，避免碰到地板
     super_ball.init()
     super_ball.load_tensegrity2xmltree()
-    # super_ball.load_string_element2xmltree(super_ball.string_list[0])
+    # super_ball.load_rod_element2xmltree(super_ball.rod_list[0])
     super_ball.prettify(super_ball.root)
     super_ball.tree.write(super_ball.xml_path, encoding='utf-8', xml_declaration=True)
+    # print(super_ball.rod_list[0])
 
 if __name__ == "__main__":
     # main1()
